@@ -1,13 +1,13 @@
 1. Install
 
 ```
-export casenum=*casename*
+export run_name=*casename*
 export startyear=*yyyy*
 export endyear=*yyyy*
 
 export cegio=$PWD
 export scratch_dir=*scratch_dir*
-ln -s *data_directory* data/$casenum
+ln -s *data_directory* data/$run_name
 ```
 
 2. Extract desired variables

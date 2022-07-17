@@ -44,3 +44,8 @@ ln -s *data_directory* data/$run_name
 ```
 ./evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
 ```
+
+6. Run model vs in-situ stations
+```
+./evaluation/stations/run_py.sh
+```

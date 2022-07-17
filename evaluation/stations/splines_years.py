@@ -2,9 +2,9 @@
 # compute pcm area for every station
 
 import numpy as np
-import matplotlib.pyplot as plt
 import netCDF4 as nc
 import similaritymeasures
+import os
 from os import sys
 from scipy.interpolate import interp1d
 
@@ -19,7 +19,7 @@ dstation = nc.Dataset(stationfile, 'a') # append
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 
 # open index
-index_table = np.loadtxt("stations_ctsm_indexes.txt", delimiter=",", unpack=False).astype(int)
+index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
 
 # write variables stations
 sta_depth = np.array(dstation['depth'])
@@ -35,8 +35,8 @@ ctsm_var   = np.array(dctsm['TSOI'])-abs_zero # convert from Kelvin to Celsius
 depth_ctsm   = np.size(dctsm.dimensions['levgrnd'])
 
 # retrieve time index from year-month ctsm to station
-year  = int(ctsmfile[80:84])
-month = int(ctsmfile[85:87])
+year  = int(os.environ['year'])
+month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 
 # creat output variable (only once)
@@ -92,6 +92,7 @@ for i in range(len(index_table[:,0])):
 
    pcm = similaritymeasures.pcm(spline1, spline2)
    if( pcm > 500.0 ):
+    print("Warning: value very high")
     print(index_table[i,0],index_table[i,1],pcm)
 
    # fill value in table

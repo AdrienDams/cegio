@@ -12,13 +12,14 @@ from os import sys
 
 # open netcdf
 stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_" + os.environ['run_name'] + ".nc"
-ctsmfile    =  sys.argv[1]
+ctsmfile =  sys.argv[1]
+#ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_032/monthly/57_DOM02_032.clm2.h0.2000-01.nc"
 
 dstation = nc.Dataset(stationfile, 'a') # append
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 
 # open index
-index_table = np.loadtxt("stations_ctsm_indexes.txt", delimiter=",", unpack=False).astype(int)
+index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
 
 # write variables stations
 sta_depth    = np.array(dstation['depth'])
@@ -33,8 +34,8 @@ ctsm_var   = np.array(dctsm['TSOI']) # change variable here
 depth_ctsm   = np.size(dctsm.dimensions['levgrnd'])
 
 # retrieve time index from year-month ctsm to station
-year  = int(ctsmfile[80:84])
-month = int(ctsmfile[85:87])
+year  = int(os.environ['year'])
+month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 
 # creat output variable (only once)
@@ -70,8 +71,6 @@ interp_depth[21] = 183
 interp_depth[22] = 195
 interp_depth[23] = 214
 interp_depth[24] = 240
-
-# define functions
 
 # fill arrays
 for i in range(len(index_table[:,0])):

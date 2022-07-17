@@ -42,22 +42,24 @@ ctsm_coord_gla = np.transpose([ctsm_lat_gla, ctsm_lon_gla])
 # write dimensions stations
 nstations = np.size(dstation['station'])
 
+# create text file column
+txt_file = []
+
 def closest_node(node, nodes, orig_index, var):
     closest_index = distance.cdist([node], nodes).argmin()
     # only print if distance between (1) lat_ctsm and lat_stat and (2) lon_ctsm and lon_stat is < 0.5 degree
     if ( (np.round(nodes[closest_index,0]) == np.round(node[0])) & (np.round(nodes[closest_index,1]) == np.round(node[1])) ):
      if ( var[0,:,closest_index].max() < 400 ): # exclude nodata values in TSOI (be sure that at least one value is below 400)
       return orig_index, closest_index
-      #return closest_index
+    else:
+     return "", ""
 
 # go through all stations
 for i in range(nstations):
  sta_coord    = (sta_lat[i], sta_lon_360[i])
  if( i == any(sta_special)): # special stations
-  print(closest_node(sta_coord, ctsm_coord_gla, i, ctsm_var_gla))
+  txt_file.append(closest_node(sta_coord, ctsm_coord_gla, i, ctsm_var_gla))
  else:
-  print(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
- #print(i)
- #print(np.array(sta_coord))
- #print(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
- #print(ctsm_coord[closest_node(sta_coord, ctsm_coord, i, ctsm_var),0], ctsm_coord[closest_node(sta_coord, ctsm_coord, i, ctsm_var),1])
+  txt_file.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
+  
+np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", txt_file, delimiter=" ", fmt="%s")

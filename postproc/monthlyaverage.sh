@@ -9,7 +9,7 @@ directory=$cegio/data/$run_name
 
 mkdir -p $directory/monthly
 
-for year in {2000..2001}; do
+for year in $( seq $startyear $endyear ) ; do
  echo "year $year"
  for i in {1..9}; do
   ncea $directory/daily/${run_name}.clm2.h0.${year}-0${i}-??.ext.nc -O $directory/monthly/${run_name}.clm2.h0.${year}-0${i}.nc

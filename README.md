@@ -1,3 +1,10 @@
+## Requirements
+- Daily files from CTSM (minimum 3 years period)
+- python3 (numpy, scipy, matplotlib, netCDF4, similaritymeasures library)
+- cdo (minimum 2.0.3)
+- nco (minimum 5.0.6)
+- bash shell
+
 1. Install
 
 ```
@@ -50,3 +57,8 @@ ln -s *data_directory* data/$run_name
 ./evaluation/stations/run_py.sh
 ```
 (`splines_graph.py` can create a graph for one station and one month of the spline - change settings in file)
+
+7. Compute trumpet curve model vs in-situ stations
+```
+./evaluation/trumpet/run_trumpet.sh
+```

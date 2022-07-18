@@ -1,5 +1,6 @@
 ## Requirements
 - Daily files from CTSM (minimum 3 years period)
+- ESACCI and in-situ observation files (available by request at adamseau@awi.de)
 - python3 (numpy, scipy, matplotlib, netCDF4, similaritymeasures libraries)
 - cdo (minimum 2.0.3)
 - nco (minimum 5.0.6)

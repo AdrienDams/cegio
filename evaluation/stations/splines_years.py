@@ -40,7 +40,7 @@ month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 
 # creat output variable (only once)
-pcm_area = dstation.createVariable('pcm_area','f4',('time', 'station'))
+#pcm_area = dstation.createVariable('pcm_area','f4',('time', 'station'))
 
 # select depth for pcm
 min_points = 4 # minimum of points in station to compute

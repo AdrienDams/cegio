@@ -3,7 +3,6 @@
 
 # TODO list
 # - make interplation closer point instead of the one below
-# - use quality variable
 
 import numpy as np
 import netCDF4 as nc
@@ -12,6 +11,7 @@ from os import sys
 
 # open netcdf
 stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_" + os.environ['run_name'] + ".nc"
+# stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_57_DOM02_032.nc"
 ctsmfile =  sys.argv[1]
 #ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_032/monthly/57_DOM02_032.clm2.h0.2000-01.nc"
 
@@ -20,11 +20,14 @@ dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 
 # open index
 index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
+#index_table = np.genfromtxt("stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
 
 # write variables stations
 sta_depth    = np.array(dstation['depth'])
 sta_qua      = np.array(dstation['quality'])
-sta_ctsm_var = dstation['ctsm_soiltemp']
+#sta_ctsm_var = dstation['ctsm_soiltemp']
+
+quality_minimum = 20.0 # minimum of days in a month to keep data
 
 # write variables ctsm outputs
 ctsm_depth = np.array(dctsm['levgrnd'])*100 # convert from m to cm
@@ -39,7 +42,7 @@ month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 
 # creat output variable (only once)
-#ctsm_var = dstation.createVariable('ctsm_soiltemp','f4',('time', 'depth', 'station'))
+ctsm_var = dstation.createVariable('ctsm_soiltemp','f4',('time', 'depth', 'station'))
 
 # depth levels which don't need interpolation
 same_depth = np.zeros(depth_ctsm, dtype=int) # ctsm depth to stations depth
@@ -75,15 +78,17 @@ interp_depth[24] = 240
 # fill arrays
 for i in range(len(index_table[:,0])):
  for j in range(depth_ctsm):
-  if ( same_depth[j] != 0 ):  # only take depth which don't need interpolation
+  A = sta_qua[date_index,j,0,index_table[i,0]]
+  if( A[A > 0].mean() > quality_minimum):
+   if ( same_depth[j] != 0 ):  # only take depth which don't need interpolation
    # first 0 is time (sta) or useless dimension (ctsm), second is depth, third is
-   sta_ctsm_var[date_index,same_depth[j],index_table[i,0]] = ctsm_var[0,j,index_table[i,1]]
-  if ( interp_depth[j] != 0 ): # depth needing an interpolation
+    sta_ctsm_var[date_index,same_depth[j],index_table[i,0]] = ctsm_var[0,j,index_table[i,1]]
+   if ( interp_depth[j] != 0 ): # depth needing an interpolation
    # see here https://stackoverflow.com/a/55355684
-   x = [ ctsm_var[0,j-1,index_table[i,1]], ctsm_var[0,j,index_table[i,1]] ]
-   y = [ ctsm_depth[j-1], ctsm_depth[j] ]
-   y_new = sta_depth[interp_depth[j]]
-   x_new = np.interp(y_new, y, x)
-   sta_ctsm_var[date_index,interp_depth[j],index_table[i,0]] = x_new
+    x = [ ctsm_var[0,j-1,index_table[i,1]], ctsm_var[0,j,index_table[i,1]] ]
+    y = [ ctsm_depth[j-1], ctsm_depth[j] ]
+    y_new = sta_depth[interp_depth[j]]
+    x_new = np.interp(y_new, y, x)
+    sta_ctsm_var[date_index,interp_depth[j],index_table[i,0]] = x_new
 
 dstation.close()

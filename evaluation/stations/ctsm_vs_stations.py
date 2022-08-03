@@ -44,7 +44,7 @@ quality_minimum = 20.0 # minimum of days in a month to keep data
 for i in range(len(index_table[:,0])):
  for j in range(depth_ctsm):
   A = sta_qua[date_index,j,0,index_table[i,0]]
-  if( A[A > 0].mean() > quality_minimum):
+  if( A > quality_minimum):
    if ( np.in1d(ctsm_depth[0],sta_depth) == True ):  # only take depth which don't need interpolation
     sta_depth_idx = np.argmin(np.abs(ctsm_depth[0]-sta_depth))
     sta_ctsm_var[date_index,sta_depth_idx,index_table[i,0]] = ctsm_var[0,j,index_table[i,1]]

@@ -1,19 +1,16 @@
 # (from A. Damseaux)
 # print a table with modelled (from CTSM output) and observed (from station) data for each station
 
-# TODO list
-# - make interplation closer point instead of the one below
-
 import numpy as np
 import netCDF4 as nc
 import os
 from os import sys
 
 # open netcdf
-stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_" + os.environ['run_name'] + ".nc"
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_57_DOM02_032.nc"
 ctsmfile =  sys.argv[1]
 #ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_032/monthly/57_DOM02_032.clm2.h0.2000-01.nc"
+stationfile = sys.argv[2]
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_57_DOM02_032.nc"
 
 dstation = nc.Dataset(stationfile, 'a') # append
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only

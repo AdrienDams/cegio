@@ -12,8 +12,8 @@ from scipy.interpolate import interp1d
 abs_zero = 273.15
 
 # open netcdf
-stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_area_" + os.environ['run_name'] + ".nc"
-ctsmfile    =  sys.argv[1]
+ctsmfile    = sys.argv[1]
+stationfile = sys.argv[2]
 
 dstation = nc.Dataset(stationfile, 'a') # append
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only

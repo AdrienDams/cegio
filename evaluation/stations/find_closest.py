@@ -28,16 +28,7 @@ ctsm_coord = np.transpose([ctsm_lat, ctsm_lon])
 
 # write variable for glacier
 pct_glacier = np.array(gfile['PCT_GLACIER'])
-
-# special stations
-sta_special = []
-
-# mask grid points special station (here for glacier)
 gla_limit = 50.0
-ctsm_lon_gla = np.where(pct_glacier > gla_limit, ctsm_lon,-9999)
-ctsm_lat_gla = np.where(pct_glacier > gla_limit, ctsm_lat,-9999)
-ctsm_var_gla = np.where(pct_glacier > gla_limit, ctsm_var,-9999)
-ctsm_coord_gla = np.transpose([ctsm_lat_gla, ctsm_lon_gla])
 
 # write dimensions stations
 nstations = np.size(dstation['station'])
@@ -50,16 +41,19 @@ def closest_node(node, nodes, orig_index, var):
     # only print if distance between (1) lat_ctsm and lat_stat and (2) lon_ctsm and lon_stat is < 0.5 degree
     if ( (np.round(nodes[closest_index,0]) == np.round(node[0])) & (np.round(nodes[closest_index,1]) == np.round(node[1])) ):
      if ( var[0,:,closest_index].max() < 400 ): # exclude nodata values in TSOI (be sure that at least one value is below 400)
-      return orig_index, closest_index
+      if ( pct_glacier[i] < gla_limit ): 		# exclude points on glacier
+       return orig_index, closest_index
+      else:
+       return "", ""
+     else:
+      return "", ""
     else:
      return "", ""
 
 # go through all stations
 for i in range(nstations):
- sta_coord    = (sta_lat[i], sta_lon_360[i])
- if( i == any(sta_special)): # special stations
-  txt_file.append(closest_node(sta_coord, ctsm_coord_gla, i, ctsm_var_gla))
- else:
-  txt_file.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
-  
-np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", txt_file, delimiter=" ", fmt="%s")
+ sta_coord = (sta_lat[i], sta_lon_360[i])
+ txt_file.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
+
+
+np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", txt_file, fmt="%s")

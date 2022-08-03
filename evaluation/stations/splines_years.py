@@ -92,7 +92,7 @@ for i in range(len(index_table[:,0])):
 
    pcm = similaritymeasures.pcm(spline1, spline2)
    if( pcm > 500.0 ):
-    print("Warning: value very high")
+    print("Warning: PCM value very high")
     print(index_table[i,0],index_table[i,1],pcm)
 
    # fill value in table

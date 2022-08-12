@@ -1,29 +1,33 @@
 # (from A. Damseaux)
 # print only one spline graph
-# choose your month and stationbelow
 
 import numpy as np
 import matplotlib.pyplot as plt
 import netCDF4 as nc
 import similaritymeasures
+import os
 from os import sys
 from scipy.interpolate import interp1d
 
 # USER SETTINGS
-sta_choosen = 200
-ctsmfile    = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0.2000-12.nc"
+year  = sys.argv[1]
+month = sys.argv[2]
+nstation = int(sys.argv[3])
+nctsm    = int(sys.argv[4])
+#year = "2000"
+#month = "1"
+#nstation = 12
+#nctsm = 237592
 
 # constant
 abs_zero = 273.15
 
 # open netcdf
 stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station.nc"
+ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-0" + month + ".nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
-
-# open index
-index_table = np.loadtxt("stations_ctsm_indexes.txt", delimiter=",", unpack=False).astype(int)
 
 # write variables stations
 sta_depth = np.array(dstation['depth'])
@@ -38,16 +42,10 @@ ctsm_var   = np.array(dctsm['TSOI'])-abs_zero # convert from Kelvin to Celsius
 depth_ctsm   = np.size(dctsm.dimensions['levgrnd'])
 
 # retrieve time index from year-month ctsm to station
-year  = int(ctsmfile[80:84])
-month = int(ctsmfile[85:87])
-date_index = ((year-1979)*12)+month-1 #verify the -1
-
-# select variables for plot
-interp_points = 500
-nstation = index_table[sta_choosen,0]
-nctsm    = index_table[sta_choosen,1]
+date_index = ((int(year)-1979)*12)+int(month)-1 #verify the -1
 
 # choose x and y
+interp_points = 500
 x1 = sta_var[date_index,:,:,nstation][:,0]
 xf1 = x1[x1 > -abs_zero]
 y1 = sta_depth
@@ -101,7 +99,7 @@ plt.fill(np.append(x_smooth1, x_smooth2[::-1]), np.append(-y_new1, -y_new2[::-1]
 plt.text(0.5, 0.5, "area: %s\N{DEGREE SIGN}C m"%round(pcm,2),horizontalalignment='center',\
           verticalalignment='center', transform = ax.transAxes,\
           bbox={'facecolor':'white','alpha':1,'edgecolor':'black','pad':1})
-plt.title("station %s"%nstation + " year %s"%year + " month %s"%month)
+plt.title("station %s"%sys.argv[5] + " year %s"%year + " month %s"%month)
 
 # plot options
 plt.xlabel('soil temperature (in \N{DEGREE SIGN}C)')

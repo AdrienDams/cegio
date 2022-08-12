@@ -11,8 +11,8 @@ sedresult="$(sed -n ${linesearch}p $cegio/evaluation/stations/stations_ctsm_inde
 if [ "$sedresult" == " " ]; then
  echo "Error! Station out of domain"
 else
- station_id="${sedresult%%,*}"
- ctsm_id="${sedresult##*, }"
+ station_id="${sedresult%% *}"
+ ctsm_id="${sedresult##* }"
  #echo $station_id
  #echo $ctsm_id
 

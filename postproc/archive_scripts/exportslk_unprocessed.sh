@@ -15,12 +15,12 @@
 source_folder=/work/aa0049/a271098/archive/${run_name}/lnd/hist
 daily_folder=/work/aa0049/a271098/archive/${run_name}/lnd/hist/daily
 target_namespace=/arch/aa0049/$USER/CTSM/${run_name}/lnd/hist/daily
-mkdir -p daily_folder
-mkdir -p target_namespace
+mkdir -p $daily_folder
+mkdir -p $target_namespace
 
 variables="SNOW_DEPTH,TSOI,TSA,SOILICE,SOILLIQ,H2OSNO,H2OSOI,FH2OSFC,FPSN,FSDS,FSA,FSH,FSNO,FSR,SNOW_PERSISTENCE,TLAI,lat,lon"
-d=2000-01-01 #start date (change test job name)
-enddate=2022-01-01
+d=1980-01-01 #start date (change test job name)
+enddate=2000-01-01
 
 while [ "$d" != $enddate ]; do
  echo $d

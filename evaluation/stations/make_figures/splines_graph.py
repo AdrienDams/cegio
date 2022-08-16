@@ -23,7 +23,7 @@ nctsm    = int(sys.argv[4])
 abs_zero = 273.15
 
 # open netcdf
-stationfile = os.environ['cegio'] + "/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station.nc"
+stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
 ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-0" + month + ".nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only

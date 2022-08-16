@@ -18,8 +18,8 @@ output_tmp="stations-vs-ctsm.1979-2019.tmp.$run_name.nc"
 output_pcm="stations-vs-ctsm.1979-2019.pcm.$run_name.nc"
 rm -f $data_folder/$run_name/$output_tmp
 rm -f $data_folder/$run_name/$output_pcm
-cp $data_folder/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station.nc $data_folder/$run_name/$output_tmp
-cp $data_folder/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_area.nc $data_folder/$run_name/$output_pcm
+cp $data_folder/orig_data/arctic_stations.soiltemp.monthly.1979-2019.ctsm.nc $data_folder/$run_name/$output_tmp
+cp $data_folder/orig_data/arctic_stations.soiltemp.monthly.1979-2019.pcm.nc $data_folder/$run_name/$output_pcm
 
 for year in $( seq $startyear $endyear ) ; do
  export year

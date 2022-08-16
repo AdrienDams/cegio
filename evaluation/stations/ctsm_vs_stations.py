@@ -12,7 +12,7 @@ abs_zero = 273.15
 ctsmfile =  sys.argv[1]
 #ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.2000-01.nc"
 stationfile = sys.argv[2]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
 
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 dstation = nc.Dataset(stationfile, 'a') # append

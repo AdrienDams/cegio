@@ -15,9 +15,9 @@ abs_zero = 273.15
 
 # open netcdf
 stationfile_dir   = os.environ['cegio'] + "/data/stations/orig_data/"
-stationfile_magt = stationfile_dir + "AllArctic_MAGT_1979-2019_native_quality_station_start181.nc"
-stationfile_min  = stationfile_dir + "AllArctic_MinAGT_1979-2019_native_quality_station_start181.nc"
-stationfile_max  = stationfile_dir + "AllArctic_MaxAGT_1979-2019_native_quality_station_start181.nc"
+stationfile_magt = stationfile_dir + "arctic_stations.magt.monthly.1979-2019.start181.nc"
+stationfile_max  = stationfile_dir + "arctic_stations.max.monthly.1979-2019.start181.nc"
+stationfile_min  = stationfile_dir + "arctic_stations.min.monthly.1979-2019.start181.nc"
 
 ctsmfile_dir  = os.environ['cegio'] + "/data/postproc/" + os.environ['run_name'] + "/processed/permafrost/"
 ctsmfile_magt = ctsmfile_dir + os.environ['run_name'] + "." + os.environ['startyear'] + "-" + os.environ['endyear'] + ".magt.nc"

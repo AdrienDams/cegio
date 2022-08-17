@@ -25,9 +25,13 @@ data_folder=$cegio/data/stations/$run_name
 #python $folder/heatmap_global.py $data_folder/$input_tmp.$run_name.nc
 #python $folder/heatmap_regional.py $data_folder/$input_tmp.q1.$run_name.nc $data_folder/$input_tmp.q2.$run_name.nc $data_folder/$input_tmp.q3.$run_name.nc $data_folder/$input_tmp.q4.$run_name.nc
 
+# linear plot
+input_linear=$data_folder/stations-vs-ctsm.1979-2019.tmp.$run_name.nc
+python $folder/linear_plot.py $input_linear
+
 # pcm area
-input_pcm = $data_folder/stations-vs-ctsm.1979-2019.pcm.$run_name.nc
-python $folder/plot_pcm.py $input_pcm
+#input_pcm=$data_folder/stations-vs-ctsm.1979-2019.pcm.$run_name.nc
+#python $folder/plot_pcm.py $input_pcm
 
 
 

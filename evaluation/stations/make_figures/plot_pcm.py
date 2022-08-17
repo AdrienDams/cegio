@@ -7,9 +7,9 @@ import cartopy.crs as ccrs
 import os
 
 # open files
-#stationfile = sys.argv[1]
-stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.pcm.57_DOM02_004.nc"
-output_dir = os.environ['cegio'] + "/output/pcm/"
+stationfile = sys.argv[1]
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.pcm.57_DOM02_004.nc"
+output_dir = os.environ['cegio'] + "/figures/pcm/"
 os.makedirs(output_dir, exist_ok=True)
 
 dstation = nc.Dataset(stationfile, 'r') # read only
@@ -82,7 +82,7 @@ for i in range(nmonths+1):
  cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
  cbar.set_label("PCM area (in C/m)", rotation=-90, labelpad=13)
 
- plot_name = output_dir + "month" + str(i+1)
- plt.savefig(plot_name+'.pdf', format='pdf',bbox_inches='tight')
+ plot_name = output_dir + "pcm_month" + str(i+1)
+ plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 
  print("plot month " + str(i+1) + ": done!")

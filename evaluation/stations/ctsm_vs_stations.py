@@ -12,7 +12,7 @@ abs_zero = 273.15
 ctsmfile =  sys.argv[1]
 #ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.2000-01.nc"
 stationfile = sys.argv[2]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
 
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 dstation = nc.Dataset(stationfile, 'a') # append
@@ -47,10 +47,12 @@ for i in range(len(index_table[:,0])):
    if ( np.in1d(sta_depth[j],ctsm_depth) == True ):  # same depth, only take depth which don't need interpolation
     sta_ctsm_var[date_index,j,index_table[i,0]] = ctsm_var[0,ctsm_depth_idx,index_table[i,1]]
    else: # depth needing an interpolation
-    if ( sta_depth[j] < ctsm_depth[ctsm_depth_idx] ): # take previous ctsm depth for interp
+    if ( sta_depth[j] > np.max(ctsm_depth) ): # if station depth below max ctsm, continue
+     continue
+    elif ( sta_depth[j] < ctsm_depth[ctsm_depth_idx] ): # take previous ctsm depth for interp
      x = [ ctsm_var[0,ctsm_depth_idx-1,index_table[i,1]], ctsm_var[0,ctsm_depth_idx,index_table[i,1]] ]
      y = [ ctsm_depth[ctsm_depth_idx-1], ctsm_depth[ctsm_depth_idx] ]
-    if ( sta_depth[j] > ctsm_depth[ctsm_depth_idx] ): # take next ctsm depth for interp
+    elif ( sta_depth[j] > ctsm_depth[ctsm_depth_idx] ): # take next ctsm depth for interp
      x = [ ctsm_var[0,ctsm_depth_idx,index_table[i,1]], ctsm_var[0,ctsm_depth_idx+1,index_table[i,1]] ]
      y = [ ctsm_depth[ctsm_depth_idx], ctsm_depth[ctsm_depth_idx+1] ]
     y_new = sta_depth[j]

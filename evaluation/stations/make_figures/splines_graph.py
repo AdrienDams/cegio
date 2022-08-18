@@ -14,17 +14,24 @@ year  = sys.argv[1]
 month = sys.argv[2]
 nstation = int(sys.argv[3])
 nctsm    = int(sys.argv[4])
-#year = "2000"
-#month = "1"
-#nstation = 12
-#nctsm = 237592
+#year = "2014"
+#month = "10"
+#nstation = 200
+#nctsm = 46440
+
+output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/splines/"
+os.makedirs(output_dir, exist_ok=True)
 
 # constant
 abs_zero = 273.15
 
 # open netcdf
 stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
-ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-0" + month + ".nc"
+if int(month) < 10:
+ ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-0" + month + ".nc"
+
+if int(month) >= 10:
+ ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-" + month + ".nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
@@ -47,6 +54,9 @@ date_index = ((int(year)-1979)*12)+int(month)-1 #verify the -1
 # choose x and y
 interp_points = 500
 x1 = sta_var[date_index,:,:,nstation][:,0]
+if( len(set(x1)) == 1 ): # if all element are the same, script is stopped
+ print("no record from year/station choosen - Spline graph cancelled")
+ exit()
 xf1 = x1[x1 > -abs_zero]
 y1 = sta_depth
 yf1 = y1[x1 > -abs_zero]
@@ -106,4 +116,8 @@ plt.xlabel('soil temperature (in \N{DEGREE SIGN}C)')
 plt.ylabel('depth (in cm)')
 
 plt.legend()
-plt.show()
+
+plot_name = output_dir + "splines_station_%s"%sys.argv[5] + "-" + year + "-" + month
+plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+
+print("splines graph figure done!")

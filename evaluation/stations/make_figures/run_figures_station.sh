@@ -31,6 +31,9 @@ else
  # linear plot
  input_linear=$data_folder/stations-vs-ctsm.1979-2019.tmp.$run_name.nc
  python $cegio/evaluation/stations/make_figures/linear_plot_station.py $input_linear $station_id $search
+
+ # trumpet curves
+ python $cegio/evaluation/stations/make_figures/trumpet_curves.py $station_id $ctsm_id $search
 fi
 
 

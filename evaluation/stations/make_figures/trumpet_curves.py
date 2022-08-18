@@ -11,6 +11,10 @@ from scipy.interpolate import interp1d
 ## Constant
 abs_zero = 273.15
 
+
+output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/trumpet/"
+os.makedirs(output_dir, exist_ok=True)
+
 ## Data
 
 # open netcdf
@@ -51,12 +55,12 @@ ctsm_max   = np.array(dctsm_max['TSOI'])-abs_zero # convert from Kelvin to Celsi
 interp_points = 500
 nsta  = int(sys.argv[1])
 nctsm = int(sys.argv[2])
-#nsta = 167
-#nctsm = 31974
+#nsta = 200
+#nctsm = 46440
 maxdepth = 21
 
 ## Period to be choosen (depending on station data)
-period = np.ma.nonzero(np.average(sta_quality[1:,:,0,nsta],axis=1)) # nsta to choose station
+period = np.ma.nonzero(np.average(~np.isnan(sta_quality[1:,:,0,nsta]),axis=1)) # nsta to choose station
 startyearind = period[0][0]
 endyearind   = period[0][-1] + 1
 startyear    = startyearind + 1980
@@ -182,4 +186,8 @@ plt.axvline(x=0, color="black", linestyle=":")
 #ax.add_artist(ab)
 
 plt.legend()
-plt.show()
+
+plot_name = output_dir + "trumpet_curves_%s"%sys.argv[3]
+plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+
+print("trumpet curves figure done!")

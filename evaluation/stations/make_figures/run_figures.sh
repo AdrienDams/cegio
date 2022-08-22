@@ -29,6 +29,10 @@ data_folder=$cegio/data/stations/$run_name
 input_pcm=$data_folder/stations-vs-ctsm.1979-2019.pcm.$run_name.nc
 python $folder/pcm_plot.py $input_pcm
 
+# scatter plots
+input_tmp=$data_folder/stations-vs-ctsm.1979-2019.tmp.$run_name.nc
+python $folder/scatter_plot.py $input_tmp
+
 
 
  

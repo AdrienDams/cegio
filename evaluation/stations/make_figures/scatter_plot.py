@@ -11,7 +11,7 @@ from scipy import stats
 from extract_functions import *
 
 # ----------------------------- Open data ---------------------------------
-output_dir = os.environ['cegio'] + "/figures/scatter/"
+output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "scatter/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Load file

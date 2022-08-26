@@ -1,7 +1,6 @@
 #!/bin/sh
-# (from H. Matthes, modified for irregular grid by A. Damseaux)
 
-#SBATCH --partition=compute
+#SBATCH --partition=shared
 #SBATCH --ntasks=1  
 #SBATCH --time=08:00:00
 #SBATCH --account=aa0049
@@ -53,7 +52,7 @@ echo "make ALT"
 for ((year=$startyear;year<=$endyear;year++)); do
  echo "year" $year
  #note: the infile is created in the process of making the permafrost extend
- altinfile=${permdir}/${run_name}.${year}.perma.timemax.nc
+ altinfile=${permdir}/${run_name}.${year}.perma.timemax.shallow.nc
  altoutfile=${permdir}/${run_name}.active_layer_depth.$year.nc
 	
  python3 ${progdir}/active_layer.py $altinfile $altoutfile

@@ -47,7 +47,7 @@ def find_profile_type(a):
   if a[0] > 0.0: 	# UF, UFU
    return "ALT"
   else:	      		# FU, FUF
-   return "invalid"	# why don't we take them?
+   return "invalid"	# no thalik 
 
  else:                 	# UFUF..., FUFU...
   return "invalid"	# why don't we take them?

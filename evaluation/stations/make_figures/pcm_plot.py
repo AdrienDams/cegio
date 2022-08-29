@@ -61,7 +61,7 @@ for i in range(nmonths+1):
             	transform=ccrs.PlateCarree())
 
  # extent map
- ax.set_extent([-180, 180, 90, 56], ccrs.PlateCarree())
+ ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
  # draw land and ocean
  ax.add_feature(cartopy.feature.OCEAN)

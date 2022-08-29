@@ -185,7 +185,7 @@ plt.axvline(x=0, color="black", linestyle=":")
 #ab = AnnotationBbox(imagebox, (10, -900), frameon = False)
 #ax.add_artist(ab)
 
-plt.legend()
+#plt.legend()
 
 plot_name = output_dir + "trumpet_curves_%s"%sys.argv[3]
 plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')

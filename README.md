@@ -41,7 +41,7 @@ ln -s *data_directory* data/$run_name
 ```
 ## Evaluations
 
-1. Run model vs. ESACCI evaluation with 3 variables
+1. Run model vs. ESACCI evaluation with 3 variables (sbatch strongly recommended)
 - ALT
 ```
 ./evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
@@ -61,7 +61,19 @@ ln -s *data_directory* data/$run_name
 ```
 (`splines_graph.py` can create a graph for one station and one month of the spline - change settings in file)
 
-3. Compute trumpet curve model vs in-situ stations
+## Mappings and plots
+
+1. Create scatter plots and PCM area maps for every station
 ```
-./evaluation/trumpet/run_trumpet.sh
+./evaluation/stations/make_figures/run_figures.sh
+```
+
+2. Create splines graph, linear plot and trumpet curves for specific station
+```
+./evaluation/stations/make_figures/run_figures_station.sh
+```
+
+3. Create maps for Model vs. ESACCI comparisons
+```
+./evaluation/ESACCI/make_figures/run_averages.sh
 ```

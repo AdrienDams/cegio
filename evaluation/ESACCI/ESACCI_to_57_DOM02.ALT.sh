@@ -29,7 +29,7 @@ for year in {1997..2019}; do
 
  # Output
  modeloutput=$variable.$run_name.$year.nc
- obsoutput=$variable.ESACCI.on.$run_name.$year.nc
+ obsoutput=$variable.$run_name.$year.nc
 
  # 3D variable (uncomment here)
  #depth=2
@@ -47,6 +47,6 @@ for year in {1997..2019}; do
  ncks -O -F -d lat,0.,90. $scratch_dir/remap_tmp.nc $modeloutput_dir/$modeloutput
 
  # Remap obs
- cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
+ #cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
 
 done

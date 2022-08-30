@@ -31,7 +31,7 @@ for year in {1997..2019}; do
 
  # Output
  modeloutput=$variable.$run_name.$year.nc
- obsoutput=$variable.ESACCI.on.$run_name.$year.nc
+ obsoutput=$variable.$run_name.$year.nc
 
  ## Take top layer
  ncks -O -F -d levgrnd,1 -selvar,$maskvariable $modelfile $scratch_dir/top_tmp.PFR.nc
@@ -46,7 +46,6 @@ for year in {1997..2019}; do
  ncks -O -F -d lat,0.,90. $scratch_dir/remap_tmp.PFR.nc $modeloutput_dir/$modeloutput
 
  # Remap obs
- #cdo -r -remap,$modeloutput_dir/$modeloutput,$weightfile $obsfile $obsoutput_dir/$obsoutput
  cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
 
 done

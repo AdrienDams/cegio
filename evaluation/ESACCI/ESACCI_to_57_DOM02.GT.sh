@@ -22,8 +22,8 @@ declare -a depthlist=("1m" "2m" "5m") #9 for 1m, 12 for 2m, 17 for 5m
 descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
 descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
 
-i=0
-for depthctsm in 9 12 17; do
+i=1
+for depthctsm in 9 12 17 ; do
  depth=${depthlist[i]}
  echo $depth
  i=$((i+1))

@@ -9,46 +9,14 @@ import sys
 import seaborn as sns
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": "-"})
 from scipy import stats
-from extract_functions import *
 
-# ----------------------------- Open data ---------------------------------
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/scatter/"
 os.makedirs(output_dir, exist_ok=True)
-
-# Load file
-stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
-dataset = nc.Dataset(stationfile)
-
-# Load variables
-data_obs   = dataset.variables['soiltemp'][:].T
-time       = data_obs.shape[-1]
-data_time  = dataset.variables['time'][:]
-data_sim   = dataset.variables['ctsm_soiltemp'][:].T
-data_depth = dataset.variables['depth'][:]
-data_lon   = dataset.variables['lon'][:]
-data_lat   = dataset.variables['lat'][:]
-nmonths    = 12
-
-dataset.close()
-
-# Assign dates (YYYY) to time data
-date_list = Date_transformer(data_time,1979)
-# --------------------------------------------------------------------------
-
-# --------------------- Extract data from NETCDF Datasets ------------------
-# We check whether we have data from every month of a year for every grid point,
-# for all years. If this is not the case, this specific the data from that year
-# gets discarded. This creates a results.csv file.
-if exists("results.csv") == False:
-	master = Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat)
-	print("Data extracted!")
-# --------------------------------------------------------------------------
 
 # -------------------------- DATA-Import from CSV --------------------------
 # 12 months for every point
 all_result = pd.DataFrame(np.array(
-    pd.read_csv('results.csv',sep=',',header=None)),
+    pd.read_csv("results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
                         columns=['year','station_lon','station_lat',
                                  'depth','measurement','simulation'])
 # --------------------------------------------------------------------------

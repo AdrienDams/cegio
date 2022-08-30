@@ -9,6 +9,9 @@
 folder=$cegio/evaluation/stations/make_figures
 data_folder=$cegio/data/stations/$run_name
 
+# extract data
+python extract_functions.py
+
 # make regions
 #input_tmp="stations-vs-ctsm.1979-2019.tmp"
 #rm -f $data_folder/$input_tmp.q1.$run_name.nc

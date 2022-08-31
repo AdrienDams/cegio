@@ -59,7 +59,6 @@ ln -s *data_directory* data/$run_name
 ```
 ./evaluation/stations/run_py.sh
 ```
-(`splines_graph.py` can create a graph for one station and one month of the spline - change settings in file)
 
 ## Mappings and plots
 

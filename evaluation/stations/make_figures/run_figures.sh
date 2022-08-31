@@ -13,7 +13,7 @@ data_folder=$cegio/data/stations/$run_name
 python extract_functions.py
 
 # make regions
-#input_tmp="stations-vs-ctsm.1979-2019.tmp"
+#input_tmp="stations-vs-ctsm.1979-2020.tmp"
 #rm -f $data_folder/$input_tmp.q1.$run_name.nc
 #rm -f $data_folder/$input_tmp.q2.$run_name.nc
 #rm -f $data_folder/$input_tmp.q3.$run_name.nc

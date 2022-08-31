@@ -23,7 +23,7 @@ nmonths   = 12
 
 # period
 startperiod = 1980 
-endperiod   = 2019
+endperiod   = 2020
 nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*nmonths)
 endindex   = ((endperiod-1979)*nmonths)

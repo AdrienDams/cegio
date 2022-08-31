@@ -29,11 +29,11 @@ python extract_functions.py
 #python $folder/heatmap_regional.py $data_folder/$input_tmp.q1.$run_name.nc $data_folder/$input_tmp.q2.$run_name.nc $data_folder/$input_tmp.q3.$run_name.nc $data_folder/$input_tmp.q4.$run_name.nc
 
 # pcm area
-input_pcm=$data_folder/stations-vs-ctsm.1979-2019.pcm.$run_name.nc
+input_pcm=$data_folder/stations-vs-ctsm.1979-2020.pcm.$run_name.nc
 python $folder/pcm_plot.py $input_pcm
 
 # scatter plots
-input_tmp=$data_folder/stations-vs-ctsm.1979-2019.tmp.$run_name.nc
+input_tmp=$data_folder/stations-vs-ctsm.1979-2020.tmp.$run_name.nc
 python $folder/scatter_plot.py $input_tmp
 
 

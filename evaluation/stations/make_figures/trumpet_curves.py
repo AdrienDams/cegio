@@ -60,7 +60,7 @@ nctsm = int(sys.argv[2])
 maxdepth = 21
 
 ## Period to be choosen (depending on station data)
-period = np.ma.nonzero(np.average(~np.isnan(sta_quality[1:,:,0,nsta]),axis=1)) # nsta to choose station
+period = np.ma.nonzero(np.average(~np.isnan(sta_quality[1:,:,nsta]),axis=1)) # nsta to choose station
 startyearind = period[0][0]
 endyearind   = period[0][-1] + 1
 startyear    = startyearind + 1980

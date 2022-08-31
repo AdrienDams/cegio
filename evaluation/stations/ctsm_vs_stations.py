@@ -25,9 +25,6 @@ sta_depth    = np.array(dstation['depth'])
 sta_qua      = np.array(dstation['quality'])
 sta_ctsm_var = dstation['ctsm_soiltemp']
 
-# creat output variable (not needed with current data)
-#sta_ctsm_var = dstation.createVariable('ctsm_soiltemp','f4',('time', 'depth', 'station'))
-
 # write variables ctsm outputs
 ctsm_depth = np.round(np.array(dctsm['levgrnd'])*100,2) # convert from m to cm
 ctsm_var   = np.array(dctsm['TSOI'])-abs_zero # change variable here
@@ -41,7 +38,7 @@ qua_min = 20.0 # minimum of days in a month to keep data
 # fill arrays
 for i in range(len(index_table[:,0])):
  for j in range(len(sta_depth)):
-  qua_check = sta_qua[date_index,j,0,index_table[i,0]]
+  qua_check = sta_qua[date_index,j,index_table[i,0]]
   if( qua_check > qua_min):
    ctsm_depth_idx = np.argmin(np.abs(sta_depth[j]-ctsm_depth)) # take ctsm depth index closest to sta index
    if ( np.in1d(sta_depth[j],ctsm_depth) == True ):  # same depth, only take depth which don't need interpolation

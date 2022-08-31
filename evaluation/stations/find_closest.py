@@ -7,7 +7,7 @@ from scipy.spatial import distance
 import os
 
 # open netcdf
-stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
+stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2020.nc"
 ctsmfile    = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0.2000-12.nc"
 glacierfile = os.environ['cegio'] + "/data/surfdata_map/surfdata_57_DOM02_hist_78pfts_CMIP6_simyr2000_c220330.nc"
 

@@ -39,9 +39,6 @@ year  = int(os.environ['year'])
 month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 
-# creat output variable (only once)
-#pcm_area = dstation.createVariable('pcm_area','f4',('time', 'station'))
-
 # select depth for pcm
 min_points = 4 # minimum of points in station to compute
 interp_points = 500
@@ -49,7 +46,7 @@ quality_minimum = 20.0
 
 for i in range(len(index_table[:,0])):
  # choose x and y
- x1 = sta_var[date_index,:,:,index_table[i,0]][:,0]
+ x1 = sta_var[date_index,:,index_table[i,0]][:,0]
  xf1 = x1[x1 > -abs_zero] # remove null data
  if( np.size(xf1) >= min_points ): # run the rest if enough data
   # check if quality is good enough

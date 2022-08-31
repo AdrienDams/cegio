@@ -45,11 +45,11 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
                 help_list=[]
                 while (index<z+12) and (checker1==True and checker2==True):
 
-                    measurement=data_obs[j][0][i][index]
+                    measurement=data_obs[j][i][index]
                     simulation=data_sim[j][i][index]
                     # minimum x records for every month
                     # double check already made in ctsm_vs_stations.py
-                    if (data_qua[j][0][i][index] >= 20):
+                    if (data_qua[j][i][index] >= 20):
                         if (measurement < 1000 and simulation < 1000) : # why 1000?
                             help_list.append(
                                 [int(date_start),
@@ -79,7 +79,7 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
              
 ## Extract files
 #stationtmpfile = sys.argv[1]
-stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
+stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
 datasettmp = nc.datasettmp(stationtmpfile)
 
 # Load variables

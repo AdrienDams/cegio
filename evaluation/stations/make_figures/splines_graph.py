@@ -26,7 +26,7 @@ os.makedirs(output_dir, exist_ok=True)
 abs_zero = 273.15
 
 # open netcdf
-stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2019.nc"
+stationfile = os.environ['cegio'] + "/data/stations/orig_data/arctic_stations.soiltemp.monthly.1979-2020.nc"
 if int(month) < 10:
  ctsmfile = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0." + year + "-0" + month + ".nc"
 
@@ -38,7 +38,6 @@ dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 
 # write variables stations
 sta_depth = np.array(dstation['depth'])
-sta_qua   = np.array(dstation['quality'])
 sta_var   = np.array(dstation['soiltemp'])
 
 # write variables ctsm outputs
@@ -53,7 +52,7 @@ date_index = ((int(year)-1979)*12)+int(month)-1 #verify the -1
 
 # choose x and y
 interp_points = 500
-x1 = sta_var[date_index,:,:,nstation][:,0]
+x1 = sta_var[date_index,:,nstation][:,0]
 if( len(set(x1)) == 1 ): # if all element are the same, script is stopped
  print("no record from year/station choosen - Spline graph cancelled")
  exit()

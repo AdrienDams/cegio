@@ -14,7 +14,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -23,7 +23,6 @@ station_choosen = int(sys.argv[2])
 # write variables stations
 sta_var  = dstation['soiltemp']
 ctsm_var = dstation['ctsm_soiltemp']
-sta_var  = sta_var[:,:,0,:] # remove useless dimension
 
 # extract station
 sta_var  = sta_var[:,:,station_choosen]

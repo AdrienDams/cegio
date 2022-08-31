@@ -13,29 +13,12 @@ echo "Enter station ID:"
 
 read search
 
-linesearch="$(grep -n $search $cegio/data/stations/station_list_AllArctic2020.txt | cut -f1 -d:)" 
+# splines graph
+python $cegio/evaluation/stations/make_figures/splines_graph.py $year $month $search
 
-sedresult="$(sed -n ${linesearch}p $cegio/evaluation/stations/stations_ctsm_indexes.txt)"
+# linear plot
+input_linear=$data_folder/stations-vs-ctsm.1979-2020.tmp.$run_name.nc
+python $cegio/evaluation/stations/make_figures/linear_plot_station.py $input_linear $search
 
-data_folder=$cegio/data/stations/$run_name
-
-if [ "$sedresult" == " " ]; then
- echo "Error! Station out of domain"
-else
- station_id="${sedresult%% *}"
- ctsm_id="${sedresult##* }"
-
- # splines graph
- python $cegio/evaluation/stations/make_figures/splines_graph.py $year $month $station_id $ctsm_id $search
-
- # linear plot
- input_linear=$data_folder/stations-vs-ctsm.1979-2019.tmp.$run_name.nc
- python $cegio/evaluation/stations/make_figures/linear_plot_station.py $input_linear $station_id $search
-
- # trumpet curves
- python $cegio/evaluation/stations/make_figures/trumpet_curves.py $station_id $ctsm_id $search
-fi
-
-
-
- 
+# trumpet curves
+python $cegio/evaluation/stations/make_figures/trumpet_curves.py $search 

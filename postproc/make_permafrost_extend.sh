@@ -61,5 +61,5 @@ done
 ncrcat ${outdir}/${run_name}.*.perma.timemax.nc -O ${outdir}/${run_name}.maxAGT.${startyear}-${endyear}.nc
 ncrcat ${outdir}/${run_name}.*.perma.timemin.nc -O ${outdir}/${run_name}.minAGT.${startyear}-${endyear}.nc
 nextyear=$(( ${startyear} + 1 ))
-ncrcat ${outdir}/${run_name}.permafrost_extend.*.nc -O ${outdir}/${run_name}.permafrost_extend.${nextyear}-${endyear}.nc
-ncrcat ${outdir}/${run_name}.permafrost_extend.*.shallow.nc -O ${outdir}/${run_name}.permafrost_extend.${nextyear}-${endyear}.shallow.nc
+ncrcat ${outdir}/${run_name}.permafrost_extend.????.nc -O ${outdir}/${run_name}.permafrost_extend.${nextyear}-${endyear}.nc
+ncrcat ${outdir}/${run_name}.permafrost_extend.????.shallow.nc -O ${outdir}/${run_name}.permafrost_extend.${nextyear}-${endyear}.shallow.nc

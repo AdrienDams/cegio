@@ -8,11 +8,11 @@
 
 folder=$cegio/evaluation/ESACCI/make_figures
 data_folder=$cegio/data/ESACCI/$run_name
-declare -a depthlist=("1m" "2m" "5m")
+declare -a depthlist=("1m" "2m" "5m" "10m")
 
 ## Soiltemp 
 # loop over depth
-for i in {0..2}; do 
+for i in {0..3}; do 
  depth=${depthlist[i]}
  echo $depth
 

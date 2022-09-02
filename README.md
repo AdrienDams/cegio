@@ -1,10 +1,11 @@
 ## Requirements
 - Daily files from CTSM (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)
-- python3 (numpy, scipy, matplotlib, netCDF4, similaritymeasures libraries)
+- python3 (numpy, pandas, scipy, matplotlib, seaborn, netCDF4, similaritymeasures libraries)
 - cdo (minimum 2.0.3)
 - nco (minimum 5.0.6)
 - bash shell
+- sbatch
 
 ## Install
 
@@ -41,18 +42,10 @@ ln -s *data_directory* data/$run_name
 ```
 ## Evaluations
 
-1. Run model vs. ESACCI evaluation with 3 variables (sbatch strongly recommended)
-- ALT
+1. Run model vs. ESACCI evaluation of 3 variables (TSOI, ALT and PFR)
+
 ```
-./evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
-```
-- Permafrost extent
-```
-./evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
-```
-- Ground temperature
-```
-./evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
+./evaluation/ESACCI/run_ESACCI_to_57_DOM02.sh
 ```
 
 2. Run model vs in-situ stations

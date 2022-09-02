@@ -2,7 +2,7 @@
 
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  
-#SBATCH --time=08:00:00
+#SBATCH --time=48:00:00
 #SBATCH --account=aa0049
 
 # set up
@@ -23,18 +23,13 @@ mkdir -p ${targetdir} ${targetdir}/processed/season ${scratch_dir} ${permdir}
 echo "make seasons"
 ${progdir}/make_season_mean_all.sh
 
-echo "make snowdepth means"
+echo "make snowdepth means"deeeeeee
 ${progdir}/make_annual_mean_snowdepth.sh
 
 echo "make ground temperature"
 ${progdir}/make_magt.sh
 
-echo "make permafrost extend"
-${progdir}/make_permafrost_extend.sh
-
-# look for 5 consicutives days of snow
-# output: nomber of days when is snow free in the year
-echo "make snow free day"
+echo "make permafrost extend"d
 for ((year=$startyear;year<=$endyear;year++)); do
  echo "year" $year
 

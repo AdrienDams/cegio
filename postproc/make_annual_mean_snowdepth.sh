@@ -18,5 +18,5 @@ while [ $year -le $endyear ]; do
 
 done
 
-ncrcat ${outdir}/${run_prefix}.annual_mean_snow_water_equivalent.????.nc -O ${outdir}/${run_name}.annual_mean_snow_water_equivalent.${startyear}-${endyear}.nc
-ncrcat ${outdir}/${run_prefix}.annual_mean_snow_depth.????.nc -O ${outdir}/${run_name}.annual_mean_snow_depth.${startyear}-${endyear}.nc
+ncrcat ${outdir}/${run_name}.annual_mean_snow_water_equivalent.????.nc -O ${outdir}/${run_name}.annual_mean_snow_water_equivalent.${startyear}-${endyear}.nc
+ncrcat ${outdir}/${run_name}.annual_mean_snow_depth.????.nc -O ${outdir}/${run_name}.annual_mean_snow_depth.${startyear}-${endyear}.nc

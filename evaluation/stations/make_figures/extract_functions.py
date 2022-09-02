@@ -78,8 +78,8 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
     return all_result
              
 ## Extract files
-#stationtmpfile = sys.argv[1]
-stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
+stationtmpfile = sys.argv[1]
+#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
 datasettmp = nc.datasettmp(stationtmpfile)
 
 # Load variables

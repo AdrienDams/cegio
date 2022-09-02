@@ -43,7 +43,7 @@ while [ "$d" != $enddate ]; do
     # concatenated two previous years
     ncrcat ${outdir}/${run_name}.$preyear.perma.vertmin.nc ${outdir}/${run_name}.$year.perma.vertmin.nc -O dummy.${year}.nc
     # add two previous years shallow
-    ncrcat ${outdir}/${run_name}.$preyear.perma.vertmin.shallow.nc ${outdir}/${run_name}.$year.perma.vertmin.shallow.nc -O dummy.shallow.${year}.nc
+    ncrcat ${outdir}/${run_name}.$preyear.perma.vertmin.shallow.nc ${outdir}/${run_name}.$year.perma.vertmin.shallow.nc -O dummy.${year}.shallow.nc
     # take only the maximum of two previous year (if maximum is negative = permafrost)
     cdo -O timselmax,2 dummy.${year}.nc ${outdir}/${run_name}.permafrost_extend.${year}.nc
     cdo -O timselmax,2 dummy.${year}.shallow.nc ${outdir}/${run_name}.permafrost_extend.${year}.shallow.nc

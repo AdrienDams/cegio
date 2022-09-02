@@ -37,6 +37,3 @@ ncrcat ${run_name}.????.spring.nc -O ${run_name}.${startyear}-${endyear}.spring.
 ncrcat ${run_name}.????.summer.nc -O ${run_name}.${startyear}-${endyear}.summer.nc1
 ncrcat ${run_name}.????.autumn.nc -O ${run_name}.${startyear}-${endyear}.autumn.nc1
 ncrcat ${run_name}.????.winter.nc -O ${run_name}.${startyear}-${endyear}.winter.nc1
-
-ncecat ${run_name}.${startyear}-${endyear}.winter.nc1 ${run_name}.${startyear}-${endyear}.spring.nc1 ${run_name}.${startyear}-${endyear}.summer.nc1 ${run_name}.${startyear}-${endyear}.autumn.nc1 -O ${run_name}.${startyear}-${endyear}.season.nc
-

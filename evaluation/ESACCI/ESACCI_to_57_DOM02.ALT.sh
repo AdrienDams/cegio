@@ -14,39 +14,33 @@ modelinput_dir="$cegio/data/postproc/$run_name/processed/permafrost"
 modeloutput_dir="$cegio/data/ESACCI/$run_name/CTSM_regridded"
 obsinput_dir="$cegio/data/ESACCI/orig_data"
 obsoutput_dir="$cegio/data/ESACCI/$run_name/ESACCI_regridded"
-scratch_dir="/scratch/a/a271098/ESACCI"
+scratch_ESA="$scratch_dir/ESACCI"
 variable="ALT"
 
 ## Description file
 descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
 descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
 
-for year in {1997..2019}; do
+for year in $( seq $startyear_esa $endyear_esa ) ; do
  echo $year
  # Input
  modelfile="$modelinput_dir/$run_name.active_layer_depth.${year}.nc"
- obsfile="$obsinput_dir/ESACCI-*-${year}-fv03.0.nc"
+ obsfile="$obsinput_dir/ESACCI-*ALT*PP-$year-fv03.0.nc"
 
  # Output
  modeloutput=$variable.$run_name.$year.nc
  obsoutput=$variable.$run_name.$year.nc
 
- # 3D variable (uncomment here)
- #depth=2
- #levelname="levgrnd" #nlevsoi
- #output=$variable.$year-$month.depth-$depth.gif
- #ncks -O -F -d $levelname,$depth $filename orig_file.nc
-
  ## Regrid model
- cdo -r setgrid,$descriptiongrid -selvar,$variable $modelfile $scratch_dir/grid_tmp.nc # any file
+ cdo -r setgrid,$descriptiongrid -selvar,$variable $modelfile $scratch_ESA/grid_tmp.nc # any file
 
  # Remap model
- cdo -r remapnn,$descriptionreg -selvar,$variable $scratch_dir/grid_tmp.nc $scratch_dir/remap_tmp.nc
+ cdo -r remapnn,$descriptionreg -selvar,$variable $scratch_ESA/grid_tmp.nc $scratch_ESA/remap_tmp.nc
 
  # Crop model (not latitude above 90)
- ncks -O -F -d lat,0.,90. $scratch_dir/remap_tmp.nc $modeloutput_dir/$modeloutput
+ ncks -O -F -d lat,0.,90. $scratch_ESA/remap_tmp.nc $modeloutput_dir/$modeloutput
 
  # Remap obs
- #cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
+ cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
 
 done

@@ -23,7 +23,7 @@ descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2
 depth=1m
 echo $depth
 
-for year in {1997..2019}; do # years available from ESACCI
+for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESACCI
  echo $year
  # Input
  modelfiles="$modelinput_dir/$run_name.clm2.h0.$year-*.nc"
@@ -39,21 +39,21 @@ for year in {1997..2019}; do # years available from ESACCI
  ncra -O -F -d levgrnd,9 -v $variable $modelfiles $scratch_ESA/$modelfile.bottom
 
  # Linear interpolation (value calculated by hand)
- ncflint -w 0.23,0.77 $scratch_ESA/$modelfile.top $scratch_ESA/$modelfile.bottom $scratch_ESA/$modelfile
+ ncflint -O -w 0.23,0.77 $scratch_ESA/$modelfile.top $scratch_ESA/$modelfile.bottom $scratch_ESA/$modelfile
 
  # Regrid model
- cdo -r setgrid,$descriptiongrid -selvar,$variable $scratch_ESA/$modelfile.int $scratch_ESA/grid_tmp.GT.nc # any file
+ cdo -r setgrid,$descriptiongrid -selvar,$variable $scratch_ESA/$modelfile $scratch_ESA/grid_tmp.$variable.$depth.nc # any file
 
  # Remap model
- cdo -r remapnn,$descriptionreg -selvar,$variable $scratch_ESA/grid_tmp.GT.nc $scratch_ESA/remap_tmp.GT.nc
+ cdo -r remapnn,$descriptionreg -selvar,$variable $scratch_ESA/grid_tmp.$variable.$depth.nc $scratch_ESA/remap_tmp.$variable.$depth.nc
 
  # Crop model (not latitude above 90)
- ncks -O -F -d lat,0.,90. $scratch_ESA/remap_tmp.GT.nc $scratch_ESA/crop_tmp.GT.nc
+ ncks -O -F -d lat,0.,90. $scratch_ESA/remap_tmp.$variable.$depth.nc $modeloutput_dir/$modeloutput
 
  # Remap obs
- cdo -r -remapcon,$scratch_ESA/crop_tmp.GT.nc -selvar,T$depth $obsfile $scratch_ESA/final_tmp.GT.nc
+ cdo -r -remapcon,$modeloutput_dir/$modeloutput -selvar,T$depth $obsfile $scratch_ESA/final_tmp.$variable.$depth.nc
 
  # Rename and move
- cdo chname,T$depth,TSOI $scratch_ESA/final_tmp.GT.nc $obsoutput_dir/$obsoutput
+ cdo chname,T$depth,TSOI $scratch_ESA/final_tmp.$variable.$depth.nc $obsoutput_dir/$obsoutput
 
 done

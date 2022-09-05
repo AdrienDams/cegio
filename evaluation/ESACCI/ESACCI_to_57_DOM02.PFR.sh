@@ -14,36 +14,35 @@ modelinput_dir="$cegio/data/postproc/$run_name/processed/permafrost"
 modeloutput_dir="$cegio/data/ESACCI/$run_name/CTSM_regridded"
 obsinput_dir="$cegio/data/ESACCI/orig_data"
 obsoutput_dir="$cegio/data/ESACCI/$run_name/ESACCI_regridded"
-scratch_dir="/scratch/a/a271098/ESACCI"
+scratch_ESA="$scratch_dir/ESACCI"
 variable="PFR"
 maskvariable="TSOI"
 
 ## Description file
 descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
 descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
-weightfile="/work/aa0049/a271098/output/evaluation/ESACCI/ESAto57.weights.con.nc"
 
-for year in {1997..2019}; do
+for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESACCI
  echo $year
  # Input
  modelfile="$modelinput_dir/$run_name.permafrost_extend.${year}.nc"
- obsfile="$obsinput_dir/ESACCI-*-${year}-fv03.0.nc"
+ obsfile="$obsinput_dir/ESACCI-*PFR*-$year-fv03.0.nc"
 
  # Output
  modeloutput=$variable.$run_name.$year.nc
  obsoutput=$variable.$run_name.$year.nc
 
  ## Take top layer
- ncks -O -F -d levgrnd,1 -selvar,$maskvariable $modelfile $scratch_dir/top_tmp.PFR.nc
+ ncks -O -F -d levgrnd,1 -selvar,$maskvariable $modelfile $scratch_ESA/top_tmp.PFR.nc
 
  ## Regrid model
- cdo -r setgrid,$descriptiongrid -selvar,$maskvariable $scratch_dir/top_tmp.PFR.nc $scratch_dir/grid_tmp.PFR.nc # any file
+ cdo -r setgrid,$descriptiongrid -selvar,$maskvariable $scratch_ESA/top_tmp.PFR.nc $scratch_ESA/grid_tmp.PFR.nc # any file
 
  # Remap model
- cdo -r remapnn,$descriptionreg -selvar,$maskvariable $scratch_dir/grid_tmp.PFR.nc $scratch_dir/remap_tmp.PFR.nc
+ cdo -r remapnn,$descriptionreg -selvar,$maskvariable $scratch_ESA/grid_tmp.PFR.nc $scratch_ESA/remap_tmp.PFR.nc
 
  # Crop model (not latitude above 90)
- ncks -O -F -d lat,0.,90. $scratch_dir/remap_tmp.PFR.nc $modeloutput_dir/$modeloutput
+ ncks -O -F -d lat,0.,90. $scratch_ESA/remap_tmp.PFR.nc $modeloutput_dir/$modeloutput
 
  # Remap obs
  cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput

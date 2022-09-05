@@ -14,9 +14,11 @@ abs_zero = 273.15
 # open netcdf
 ctsmfile    = sys.argv[1]
 stationfile = sys.argv[2]
+#ctsmfile	= "/work/aa0049/a271098/cegio/data/57_DOM02_034/monthly/57_DOM02_034.clm2.h0.1980-01.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.pcm.57_DOM02_034.nc"
 
-dstation = nc.Dataset(stationfile, 'a') # append
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
+dstation = nc.Dataset(stationfile, 'a') # append
 
 # open index
 index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
@@ -35,6 +37,8 @@ ctsm_var   = np.array(dctsm['TSOI'])-abs_zero # convert from Kelvin to Celsius
 depth_ctsm   = np.size(dctsm.dimensions['levgrnd'])
 
 # retrieve time index from year-month ctsm to station
+#year   = 1980
+#month  = 1
 year  = int(os.environ['year'])
 month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
@@ -46,14 +50,16 @@ quality_minimum = 20.0
 
 for i in range(len(index_table[:,0])):
  # choose x and y
- x1 = sta_var[date_index,:,index_table[i,0]][:,0]
+ x1 = sta_var[date_index,:,index_table[i,0]][:]
  xf1 = x1[x1 > -abs_zero] # remove null data
+ xf1 = xf1[xf1 < 2*abs_zero] # remove null data
  if( np.size(xf1) >= min_points ): # run the rest if enough data
   # check if quality is good enough
-  A = sta_qua[date_index,:,0,index_table[i,0]]
+  A = sta_qua[date_index,:,index_table[i,0]]
   if( A[A > 0].mean() > quality_minimum ):
    y1 = sta_depth
    yf1 = y1[x1 > -abs_zero] # remove null data
+   yf1 = y1[x1 < 2*abs_zero] # remove null data
    xf1 = xf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
    yf1 = yf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
 

@@ -52,13 +52,16 @@ date_index = ((int(year)-1979)*12)+int(month)-1 #verify the -1
 
 # choose x and y
 interp_points = 500
-x1 = sta_var[date_index,:,nstation][:,0]
+x1 = sta_var[date_index,:,nstation][:]
 if( len(set(x1)) == 1 ): # if all element are the same, script is stopped
  print("no record from year/station choosen - Spline graph cancelled")
  exit()
+
 xf1 = x1[x1 > -abs_zero]
+xf1 = xf1[xf1 < 2*abs_zero] # remove null data
 y1 = sta_depth
 yf1 = y1[x1 > -abs_zero]
+yf1 = y1[x1 < 2*abs_zero] # remove null data
 xf1 = xf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
 yf1 = yf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
 

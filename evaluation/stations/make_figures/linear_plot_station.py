@@ -5,6 +5,7 @@ import numpy as np
 import netCDF4 as nc
 import matplotlib.pylab as plt
 from matplotlib.cm import ScalarMappable
+from matplotlib.colors import TwoSlopeNorm
 import os
 from os import sys
 from plotting_functions import *
@@ -14,7 +15,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/orig_data/old/AllArctic_SoilTemperature_monthly_native_quality_1979-2019_station_ctsm_0906.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -71,12 +72,16 @@ ax.plot(years, sta_var_ravg, color="black")
 
 # color histogram
 cm = plt.cm.RdYlBu_r
-rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
+def my_ceil(a, precision=1):
+    return np.true_divide(np.ceil(a * 10**precision), 10**precision)
+cmap_top = my_ceil(np.max(np.absolute(diff)))
+#rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
+rescale = lambda y: (y - (-cmap_top)) / (cmap_top - -(cmap_top))
 ax.bar(years, diff, color=cm(rescale(diff)))
 
 # plot options
-ymax = np.max([sta_var_ravg,ctsm_var_ravg]) + 0.5
-ymin = np.min([sta_var_ravg,ctsm_var_ravg]) - 0.5
+ymax = np.max([sta_var_ravg,ctsm_var_ravg,diff]) + 0.5
+ymin = np.min([sta_var_ravg,ctsm_var_ravg,diff]) - 0.5
 ax.set_ylim([ymin, ymax])
 ax.axhline(y=0, color="k", linestyle="--")
 ax.set_xlabel("year")
@@ -92,7 +97,7 @@ ax.text(ctsm_pos_lab[0],ctsm_pos_lab[1],s="ctsm ouput",color="#AD885F")
 ax.text(sta_pos_lab[0],sta_pos_lab[1],s="station %s"%sys.argv[3],color="black")
 
 # colorbar
-sm = ScalarMappable(cmap=cm, norm=plt.Normalize(np.min(diff),np.max(diff)))
+sm = ScalarMappable(cmap=cm, norm=plt.Normalize(-cmap_top,cmap_top))
 sm.set_array([])
 cbar = plt.colorbar(sm, pad=0.1)
 cbar.set_label('difference', rotation=270,labelpad=10)

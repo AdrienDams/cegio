@@ -23,13 +23,19 @@ mkdir -p ${targetdir} ${targetdir}/processed/season ${scratch_dir} ${permdir}
 echo "make seasons"
 ${progdir}/make_season_mean_all.sh
 
-echo "make snowdepth means"deeeeeee
+echo "make snowdepth means"
 ${progdir}/make_annual_mean_snowdepth.sh
 
 echo "make ground temperature"
 ${progdir}/make_magt.sh
 
-echo "make permafrost extend"d
+echo "make permafrost extend"
+${progdir}/make_permafrost_extend.sh
+
+# look for 5 consicutives days of snow
+# output: nomber of days when is snow free in the year
+echo "make snow free day"
+
 for ((year=$startyear;year<=$endyear;year++)); do
  echo "year" $year
 

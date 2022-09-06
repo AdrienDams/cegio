@@ -13,9 +13,9 @@ import sys
 ctsmfile = sys.argv[1]
 esafile  = sys.argv[2]
 output_name = sys.argv[3]
-#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/CTSM_regridded/PFR.57_DOM02_004.1997.nc"
-#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/ESACCI_regridded/PFR.ESACCI.on.57_DOM02_004.1998.nc"
-#output_name = "1997"
+#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_034/CTSM_regridded/PFR.57_DOM02_034.2001.nc"
+#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_034/ESACCI_regridded/PFR.57_DOM02_034.2001.nc"
+#output_name = "2001"
 variable = "PFR"
 
 
@@ -83,10 +83,8 @@ ax.set_boundary(circle, transform=ax.transAxes)
 # gridlines labels
 gl = ax.gridlines(draw_labels=True)
 
-plt.show()
-
 plot_name = output_dir + output_name + ".diff"
 plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
-print("permafrost map: done!")
+print("permafrost map " + output_name + ": done!")

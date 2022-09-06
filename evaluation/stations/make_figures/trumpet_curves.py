@@ -55,8 +55,8 @@ ctsm_max   = np.array(dctsm_max['TSOI'])-abs_zero # convert from Kelvin to Celsi
 interp_points = 500
 nsta  = int(sys.argv[1])
 nctsm = int(sys.argv[2])
-#nsta = 200
-#nctsm = 46440
+#nsta = 125
+#nctsm = 33127
 maxdepth = 21
 
 ## Period to be choosen (depending on station data)

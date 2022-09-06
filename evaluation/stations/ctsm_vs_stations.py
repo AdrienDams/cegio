@@ -10,9 +10,9 @@ abs_zero = 273.15
 
 # open netcdf
 ctsmfile =  sys.argv[1]
-#ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.2000-01.nc"
+#ctsmfile = "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.2010-01.nc"
 stationfile = sys.argv[2]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
 
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 dstation = nc.Dataset(stationfile, 'a') # append
@@ -39,9 +39,9 @@ qua_min = 20.0 # minimum of days in a month to keep data
 for i in range(len(index_table[:,0])):
  for j in range(len(sta_depth)):
   qua_check = sta_qua[date_index,j,index_table[i,0]]
-  if( qua_check > qua_min):
+  if( qua_check > qua_min ):
    ctsm_depth_idx = np.argmin(np.abs(sta_depth[j]-ctsm_depth)) # take ctsm depth index closest to sta index
-   if ( np.in1d(sta_depth[j],ctsm_depth) == True ):  # same depth, only take depth which don't need interpolation
+   if ( np.in1d(sta_depth[j],ctsm_depth) == True or sta_depth[j]==0):  # same depth or first depth, only take depth which don't need interpolation
     sta_ctsm_var[date_index,j,index_table[i,0]] = ctsm_var[0,ctsm_depth_idx,index_table[i,1]]
    else: # depth needing an interpolation
     if ( sta_depth[j] > np.max(ctsm_depth) ): # if station depth below max ctsm, continue

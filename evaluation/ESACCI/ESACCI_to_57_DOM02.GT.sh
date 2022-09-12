@@ -20,7 +20,6 @@ variable="TSOI"
 descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
 descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
 
-depth=1m
 echo $depth
 
 for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESACCI
@@ -35,11 +34,12 @@ for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESA
  obsoutput=$variable.$depth.$run_name.$year.nc
 
  # Model input yearly average
- ncra -O -F -d levgrnd,8 -v $variable $modelfiles $scratch_ESA/$modelfile.top
- ncra -O -F -d levgrnd,9 -v $variable $modelfiles $scratch_ESA/$modelfile.bottom
+ echo $depth $toplayer $botlayer
+ ncra -O -d levgrnd,$toplayer -v $variable $modelfiles $scratch_ESA/$modelfile.top
+ ncra -O -d levgrnd,$botlayer -v $variable $modelfiles $scratch_ESA/$modelfile.bottom
 
  # Linear interpolation (value calculated by hand)
- ncflint -O -w 0.23,0.77 $scratch_ESA/$modelfile.top $scratch_ESA/$modelfile.bottom $scratch_ESA/$modelfile
+ ncflint -O -w $inttop,$intbot $scratch_ESA/$modelfile.top $scratch_ESA/$modelfile.bottom $scratch_ESA/$modelfile
 
  # Regrid model
  cdo -r setgrid,$descriptiongrid -selvar,$variable $scratch_ESA/$modelfile $scratch_ESA/grid_tmp.$variable.$depth.nc # any file

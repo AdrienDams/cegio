@@ -25,15 +25,15 @@ descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2
 for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESACCI
  echo $year
  # Input
- modelfile="$modelinput_dir/$run_name.permafrost_extend.${year}.nc"
+ modelfile="$modelinput_dir/$run_name.permafrost_extend.${year}.shallow.nc"
  obsfile="$obsinput_dir/ESACCI-*PFR*-$year-fv03.0.nc"
 
  # Output
  modeloutput=$variable.$run_name.$year.nc
  obsoutput=$variable.$run_name.$year.nc
 
- ## Take top layer
- ncks -O -F -d levgrnd,1 -selvar,$maskvariable $modelfile $scratch_ESA/top_tmp.PFR.nc
+ ## Take variable
+ ncks -O -selvar,$maskvariable $modelfile $scratch_ESA/top_tmp.PFR.nc
 
  ## Regrid model
  cdo -r setgrid,$descriptiongrid -selvar,$maskvariable $scratch_ESA/top_tmp.PFR.nc $scratch_ESA/grid_tmp.PFR.nc # any file

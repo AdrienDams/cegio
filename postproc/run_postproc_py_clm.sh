@@ -21,10 +21,10 @@ export permdir=${targetdir}/processed/permafrost #  output files for perma
 mkdir -p ${targetdir} ${targetdir}/processed/season ${scratch_dir} ${permdir}
 
 echo "make seasons"
-${progdir}/make_season_mean_all.sh
+#${progdir}/make_season_mean_all.sh
 
 echo "make snowdepth means"
-${progdir}/make_annual_mean_snowdepth.sh
+#${progdir}/make_annual_mean_snowdepth.sh
 
 echo "make ground temperature"
 ${progdir}/make_magt.sh
@@ -41,9 +41,9 @@ for ((year=$startyear;year<=$endyear;year++)); do
 
  snowinfile=${scratch_dir}/${run_name}.swemerge.$year.nc
  snowoutfile=${permdir}/${run_name}.snowfreeday.5days.$year.nc
- cdo -select,name=H2OSNO ${datadir}/daily/${run_prefix}.$year* $snowinfile
+ #cdo -select,name=H2OSNO ${datadir}/daily/${run_prefix}.$year* $snowinfile
 
- python3 ${progdir}/end_snow_melt.py $snowinfile $snowoutfile
+ #python3 ${progdir}/end_snow_melt.py $snowinfile $snowoutfile
 done
 
 # maximum of soils that thaw in a year

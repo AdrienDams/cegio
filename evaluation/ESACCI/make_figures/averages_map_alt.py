@@ -29,6 +29,9 @@ os.makedirs(output_dir, exist_ok=True)
 ctsm_var = dctsm.variables[variable][:,:] 
 esa_var  = desa.variables[variable][0,:,:] # remove useless dimension
 
+# only take esa where ctsm exists
+esa_var_test = np.ma.masked_array(esa_var, mask=ctsm_var.mask == False)
+
 lon = dctsm.variables['lon']
 lat = dctsm.variables['lat']
 
@@ -124,4 +127,4 @@ plot_name = output_dir + output_name + ".diff"
 plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
-print("soiltemp average map " + output_name + ": done!")
+print("alt average map " + output_name + ": done!")

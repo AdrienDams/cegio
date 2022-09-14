@@ -3,7 +3,7 @@
 #SBATCH  --nodes=1
 #SBATCH  --ntasks-per-node=24                     
 #SBATCH  --account=aa0049           
-#SBATCH  --partition=compute 
+#SBATCH  --partition=shared 
 
 directory=$cegio/data/$run_name
 

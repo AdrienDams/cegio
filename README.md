@@ -1,7 +1,7 @@
 ## Requirements
 - Daily files from CTSM (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)
-- python3 (numpy, pandas, scipy, matplotlib, seaborn, netCDF4, similaritymeasures libraries)
+- python3 (numpy, pandas, scipy, matplotlib, seaborn, netCDF4, similaritymeasures, cartopy libraries)
 - cdo (minimum 2.0.3)
 - nco (minimum 5.0.6)
 - bash shell
@@ -22,12 +22,12 @@ ln -s *data_directory* data/$run_name
 
 1. Extract desired variables
 ```
-./postproc/extract_variable.sh
+sbatch ./postproc/extract_variable.sh
 ```
 
 2. Compute monthly averages
 ```
-./postproc/monthlyaverage.sh
+sbatch ./postproc/monthlyaverage.sh
 ```
 
 3.. Run post-processing. This includes:
@@ -38,34 +38,46 @@ ln -s *data_directory* data/$run_name
 - Compute snow free day `end_snow_melt.py`
 - Compute Active Layer Thickness (ALT) `active_layer.py`
 ```
-./postproc/run_postproc_py_clm.sh
+sbatch ./postproc/run_postproc_py_clm.sh
 ```
 ## Evaluations
 
-1. Run model vs. ESACCI evaluation of 3 variables (TSOI, ALT and PFR)
+1. Run CTSM vs in-situ stations
+```
+sbatch ./evaluation/stations/run_py.sh
+```
+
+2. Run CTSM vs CALM stations
+```
+sbatch ./evaluation/CALM/run_py.sh
+```
+
+3. Run CTSM vs. ESACCI evaluation of 3 variables (TSOI, ALT and PFR)
 
 ```
-./evaluation/ESACCI/run_ESACCI_to_57_DOM02.sh
-```
-
-2. Run model vs in-situ stations
-```
-./evaluation/stations/run_py.sh
+sbatch ./evaluation/ESACCI/run_ESACCI_to_57_DOM02.sh
 ```
 
 ## Mappings and plots
 
 1. Create scatter plots and PCM area maps for every station
 ```
-./evaluation/stations/make_figures/run_figures.sh
+sbatch ./evaluation/stations/make_figures/run_figures.sh
 ```
 
 2. Create splines graph, linear plot and trumpet curves for specific station
 ```
-./evaluation/stations/make_figures/run_figures_station.sh
+sbatch ./evaluation/stations/make_figures/run_figures_station.sh
 ```
 
-3. Create maps for Model vs. ESACCI comparisons
+3. Create maps for CTSM vs. CALM
 ```
-./evaluation/ESACCI/make_figures/run_averages.sh
+sbatch ./evaluation/CALM/make_figures/run_figure.sh
 ```
+
+4. Create maps for CTSM vs. ESACCI comparisons
+```
+sbatch ./evaluation/ESACCI/make_figures/run_averages.sh
+```
+
+

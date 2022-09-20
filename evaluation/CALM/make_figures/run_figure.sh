@@ -41,3 +41,6 @@ ncks -O -F -d lat,0.,90. $modeloutput_dir/remap_tmp.nc $modeloutput_dir/$modelou
 
 # create figure
 python $folder/map_ctsm_calm.py $modeloutput_dir/$modeloutput
+
+# scatter
+python $folder/scatter_ctsm_calm.py 

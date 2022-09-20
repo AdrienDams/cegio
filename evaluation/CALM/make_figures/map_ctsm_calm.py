@@ -4,7 +4,6 @@ import netCDF4 as nc
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 import matplotlib.colors as colors
-from matplotlib.colors import TwoSlopeNorm
 import cartopy
 import cartopy.crs as ccrs
 import os

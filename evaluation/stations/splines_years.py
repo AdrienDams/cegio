@@ -14,8 +14,8 @@ abs_zero = 273.15
 # open netcdf
 ctsmfile    = sys.argv[1]
 stationfile = sys.argv[2]
-#ctsmfile	= "/work/aa0049/a271098/cegio/data/57_DOM02_034/monthly/57_DOM02_034.clm2.h0.1980-01.nc"
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.pcm.57_DOM02_034.nc"
+#ctsmfile	= "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.1980-01.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.pcm.57_DOM02_004.nc"
 
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 dstation = nc.Dataset(stationfile, 'a') # append
@@ -27,7 +27,7 @@ index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations
 sta_depth = np.array(dstation['depth'])
 sta_qua   = np.array(dstation['quality'])
 sta_var   = np.array(dstation['soiltemp'])
-pcm_area  = dstation['pcm_area']
+pcm_var  = dstation['pcm']
 
 # write variables ctsm outputs
 ctsm_depth = np.array(dctsm['levgrnd'])*100 # convert from m to cm
@@ -59,7 +59,7 @@ for i in range(len(index_table[:,0])):
   if( A[A > 0].mean() > quality_minimum ):
    y1 = sta_depth
    yf1 = y1[x1 > -abs_zero] # remove null data
-   yf1 = y1[x1 < 2*abs_zero] # remove null data
+   yf1 = yf1[xf1 < 2*abs_zero] # remove null data
    xf1 = xf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
    yf1 = yf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
 
@@ -68,7 +68,7 @@ for i in range(len(index_table[:,0])):
    bot_interp = np.interp(yf1[-1],ctsm_depth,ctsm_var[0,:,index_table[i,1]])
 
    # choose x and y 2
-   x2 = ctsm_var[0,:,index_table[i,1]] 											# choose only the station we want
+   x2 = ctsm_var[0,:,index_table[i,1]] 									# choose only the station we want
    xf2 = x2[np.where((ctsm_depth > yf1[0]) & (ctsm_depth < yf1[-1]))] 	# add temps between both interp station depth
    xf2 = np.append(top_interp, xf2) 									# add first station temp
    xf2 = np.append(xf2, bot_interp) 									# add last station temp
@@ -93,12 +93,18 @@ for i in range(len(index_table[:,0])):
    spline1[:,1] = y_new1
    spline2[:,1] = y_new2
 
-   pcm = similaritymeasures.pcm(spline1, spline2)
-   if( pcm > 500.0 ):
+   max_depth = max(yf1[-1]-yf1[0],yf2[-1]-yf2[0])
+
+   pcm = similaritymeasures.pcm(spline1, spline2)/max_depth
+   if( pcm > 10.0 ):
     print("Warning: PCM value very high")
-    print(index_table[i,0],index_table[i,1],pcm)
+    print("station",index_table[i,0],"nctsm","pcm",index_table[i,1],pcm)
+
+   # give negative sign if model colder
+   if(np.mean(xf2)-np.mean(xf1)<0):
+    pcm = -pcm
 
    # fill value in table
-   pcm_area[date_index,index_table[i,0]] = pcm
+   pcm_var[date_index,index_table[i,0]] = pcm
 
 dstation.close()

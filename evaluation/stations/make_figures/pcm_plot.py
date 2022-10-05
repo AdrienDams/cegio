@@ -5,16 +5,17 @@ import matplotlib.path as mpath
 import cartopy
 import cartopy.crs as ccrs
 import os
+import sys
 
 # open files
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.pcm.57_DOM02_004.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.pcm.57_DOM02_034.nc"
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/pcm/"
 os.makedirs(output_dir, exist_ok=True)
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
-pcm = dstation['pcm_area']
+pcm = dstation['pcm']
 lon = dstation['lon']
 lat = dstation['lat']
 
@@ -40,7 +41,7 @@ for i in range(nmonths+1):
   lon_true = np.array(lon[pcm_month.mask == False])
   lat_true = np.array(lat[pcm_month.mask == False])
 
- else:
+ else: # year average
   pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
 
   pcm_true = np.array(pcm_period[pcm_period.mask == False])
@@ -85,4 +86,4 @@ for i in range(nmonths+1):
  plot_name = output_dir + "pcm_month" + str(i+1)
  plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 
- print("plot month " + str(i+1) + ": done!")
+ print("pcm plot month " + str(i+1) + ": done!")

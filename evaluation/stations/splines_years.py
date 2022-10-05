@@ -14,8 +14,8 @@ abs_zero = 273.15
 # open netcdf
 ctsmfile    = sys.argv[1]
 stationfile = sys.argv[2]
-#ctsmfile	= "/work/aa0049/a271098/cegio/data/57_DOM02_004/monthly/57_DOM02_004.clm2.h0.1980-01.nc"
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.pcm.57_DOM02_004.nc"
+#ctsmfile= "/work/aa0049/a271098/cegio/data/57_DOM02_040/monthly/57_DOM02_040.clm2.h0.1980-01.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.pcm.57_DOM02_040.nc"
 
 dctsm    = nc.Dataset(ctsmfile, 'r') # read only
 dstation = nc.Dataset(stationfile, 'a') # append
@@ -48,18 +48,19 @@ min_points = 4 # minimum of points in station to compute
 interp_points = 500
 quality_minimum = 20.0
 
-for i in range(len(index_table[:,0])):
+for i in range(len(index_table[:,0])): # i=10 is good to try
  # choose x and y
  x1 = sta_var[date_index,:,index_table[i,0]][:]
- xf1 = x1[x1 > -abs_zero] # remove null data
- xf1 = xf1[xf1 < 2*abs_zero] # remove null data
+ no_null_ind = np.where((x1 > -abs_zero) & (x1 < 2*abs_zero)) # index of null data
+ xf1 = x1[no_null_ind] # remove null data
  if( np.size(xf1) >= min_points ): # run the rest if enough data
   # check if quality is good enough
   A = sta_qua[date_index,:,index_table[i,0]]
+  A = A[no_null_ind]
   if( A[A > 0].mean() > quality_minimum ):
    y1 = sta_depth
-   yf1 = y1[x1 > -abs_zero] # remove null data
-   yf1 = yf1[xf1 < 2*abs_zero] # remove null data
+   yf1 = y1[no_null_ind] # remove null data
+   
    xf1 = xf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
    yf1 = yf1[yf1 < ctsm_depth[-1]] # be sure to don't take a depth below model
 

@@ -35,12 +35,12 @@ for i in range(np.shape(ctsm_alt)[0]):
 			diff[i,j] = None
 
 # stats
-slope, intercept, r_value, p_value, std_err = stats.linregress(calm_alt,ctsm_alt)
+#slope, intercept, r_value, p_value, std_err = stats.linregress(calm_alt,ctsm_alt)
 
 # scatter plot
 fig, ax = plt.subplots()
 fig.set_figheight(10)
-fig.set_figwidth(15)
+fig.set_figwidth(3)
 
 sns.regplot(x = np.ma.masked_invalid(calm_alt[ctsm_alt>0]).flatten(),
 			y = np.ma.masked_invalid(ctsm_alt[ctsm_alt>0]).flatten())
@@ -48,6 +48,10 @@ sns.regplot(x = np.ma.masked_invalid(calm_alt[ctsm_alt>0]).flatten(),
 # labeling
 ax.set_xlabel(r' ALT from CALM in m',fontsize=14)
 ax.set_ylabel(r' ALT from CTSM in m ',fontsize=14)
+
+#plot options
+ax.set_xlim(0,3)
+ax.set_ylim(0,8)
 
 # save output
 plot_name = output_dir + "scatter_ctsm_calm"

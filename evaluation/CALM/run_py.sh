@@ -7,7 +7,7 @@
 #SBATCH --account=aa0049
 
 folder=$cegio/evaluation/CALM/
-data_folder=$cegio/data/postproc/$run_name/processed/permafrost/
+data_folder=$cegio/data/postproc/$run_name/processed/permafrost
 
 # period average
 ncecat $data_folder/$run_name.active_layer_depth.????.nc -O $data_folder/$run_name.active_layer_depth.period.nc

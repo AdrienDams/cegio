@@ -55,5 +55,4 @@ for i in range(nstations):
  sta_coord = (sta_lat[i], sta_lon_360[i])
  txt_file.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var))
 
-
 np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", txt_file, fmt="%s")

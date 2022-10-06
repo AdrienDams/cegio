@@ -9,7 +9,7 @@ import sys
 
 # open files
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.pcm.57_DOM02_034.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.pcm.57_DOM02_040.nc"
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/pcm/"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -17,37 +17,45 @@ dstation = nc.Dataset(stationfile, 'r') # read only
 
 pcm = dstation['pcm']
 lon = dstation['lon']
+lon = lon[lon.mask == False]
 lat = dstation['lat']
 
 nstations = np.size(lon)
+nseasons  = 4
 nmonths   = 12
 
 # period
 startperiod = 1980 
 endperiod   = 2020
-nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*nmonths)
 endindex   = ((endperiod-1979)*nmonths)
 
-# looping over every month + period
-for i in range(nmonths+1):
+label_seasons = ['DJF', 'MAM', 'JJA', 'SON', 'period']
 
- if(i<nmonths):
-  # month period average
-  pcm_month  = np.average(pcm[i+startindex:i+endindex:nmonths,:],axis=0)
-
+# looping over every seasons + period
+for i in range(nseasons+1):
+ i1 = (i*3)-1 # first month
+ i2 = (i*3)   # second month
+ i3 = (i*3)+1 # third month
+#
+ if(i<nseasons):
+  # season average
+  pcm_season  = (np.average(pcm[i1+startindex:i1+endindex:nmonths,:],axis=0) + \
+					np.average(pcm[i2+startindex:i2+endindex:nmonths,:],axis=0) + \
+						np.average(pcm[i3+startindex:i3+endindex:nmonths,:],axis=0))/3
+#
   # take only stations with values
-  pcm_true = np.array(pcm_month[pcm_month.mask == False])
-  lon_true = np.array(lon[pcm_month.mask == False])
-  lat_true = np.array(lat[pcm_month.mask == False])
-
- else: # year average
+  pcm_true = np.array(pcm_season[pcm_season.mask == False])
+  lon_true = lon[pcm_season.mask == False]
+  lat_true = lat[pcm_season.mask == False]
+#
+ else: # period average
   pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
-
+#
   pcm_true = np.array(pcm_period[pcm_period.mask == False])
-  lon_true = np.array(lon[pcm_period.mask == False])
-  lat_true = np.array(lat[pcm_period.mask == False])  
-
+  lon_true = lon[pcm_period.mask == False]
+  lat_true = lat[pcm_period.mask == False]) 
+#
  ## Mapping
  fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
 
@@ -56,7 +64,7 @@ for i in range(nmonths+1):
 				lat_true,
 				c=pcm_true,
 				cmap="Reds_r",
-            	s=pcm_true,
+            	s=pcm_true*10,
 				edgecolor='black',
 				linewidth=0.1,
             	transform=ccrs.PlateCarree())
@@ -83,7 +91,7 @@ for i in range(nmonths+1):
  cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
  cbar.set_label("PCM area (in C/m)", rotation=-90, labelpad=13)
 
- plot_name = output_dir + "pcm_month" + str(i+1)
+ plot_name = output_dir + "pcm_" + label_seasons[i]
  plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 
- print("pcm plot month " + str(i+1) + ": done!")
+ print("pcm plot month " + label_seasons[i] + ": done!")

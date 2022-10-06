@@ -1,5 +1,5 @@
 ## Requirements
-- Daily files from CTSM (minimum 3 years period)
+- Daily files from CTSM using 57_DOM02 domain (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)
 - python3 (numpy, pandas, scipy, matplotlib, seaborn, netCDF4, similaritymeasures, cartopy libraries)
 - cdo (minimum 2.0.3)

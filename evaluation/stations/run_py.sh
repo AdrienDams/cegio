@@ -21,6 +21,10 @@ rm -f $data_folder/$run_name/$output_pcm
 cp $data_folder/orig_data/arctic_stations.soiltemp.monthly.1979-2020.tmp.nc $data_folder/$run_name/$output_tmp
 cp $data_folder/orig_data/arctic_stations.soiltemp.monthly.1979-2020.pcm.nc $data_folder/$run_name/$output_pcm
 
+if [ $endyear > 2020 ]; then
+ endyear=2020
+fi
+
 for year in $( seq $startyear $endyear ) ; do
  export year
  echo $year

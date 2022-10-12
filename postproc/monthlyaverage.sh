@@ -1,9 +1,9 @@
 #!/bin/bash
 # Batch system directives
 #SBATCH  --nodes=1
-#SBATCH  --ntasks-per-node=24                     
 #SBATCH  --account=aa0049           
 #SBATCH  --partition=shared 
+#SBATCH  --time=48:00:00
 
 directory=$cegio/data/$run_name
 

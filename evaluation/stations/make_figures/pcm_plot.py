@@ -2,6 +2,7 @@ import numpy as np
 import netCDF4 as nc
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
+import matplotlib.colors as colors
 import cartopy
 import cartopy.crs as ccrs
 import os
@@ -17,81 +18,78 @@ dstation = nc.Dataset(stationfile, 'r') # read only
 
 pcm = dstation['pcm']
 lon = dstation['lon']
-lon = lon[lon.mask == False]
 lat = dstation['lat']
 
 nstations = np.size(lon)
-nseasons  = 4
 nmonths   = 12
 
 # period
 startperiod = 1980 
 endperiod   = 2020
+nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*nmonths)
 endindex   = ((endperiod-1979)*nmonths)
 
-label_seasons = ['DJF', 'MAM', 'JJA', 'SON', 'period']
+# looping over every month + period
+for i in range(nmonths+1):
 
-# looping over every seasons + period
-for i in range(nseasons+1):
- i1 = (i*3)-1 # first month
- i2 = (i*3)   # second month
- i3 = (i*3)+1 # third month
-#
- if(i<nseasons):
-  # season average
-  pcm_season  = (np.average(pcm[i1+startindex:i1+endindex:nmonths,:],axis=0) + \
-					np.average(pcm[i2+startindex:i2+endindex:nmonths,:],axis=0) + \
-						np.average(pcm[i3+startindex:i3+endindex:nmonths,:],axis=0))/3
-#
-  # take only stations with values
-  pcm_true = np.array(pcm_season[pcm_season.mask == False])
-  lon_true = lon[pcm_season.mask == False]
-  lat_true = lat[pcm_season.mask == False]
-#
- else: # period average
-  pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
-#
-  pcm_true = np.array(pcm_period[pcm_period.mask == False])
-  lon_true = lon[pcm_period.mask == False]
-  lat_true = lat[pcm_period.mask == False]) 
-#
- ## Mapping
- fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
+	if(i<nmonths):
+		# month period average
+		pcm_month  = np.average(pcm[i+startindex:i+endindex:nmonths,:],axis=0)
 
- # display points
- sp = ax.scatter(lon_true,
-				lat_true,
-				c=pcm_true,
-				cmap="Reds_r",
-            	s=pcm_true*10,
-				edgecolor='black',
-				linewidth=0.1,
-            	transform=ccrs.PlateCarree())
+		# take only stations with values
+		pcm_true = np.array(np.round(pcm_month[pcm_month.mask == False],2))
+		lon_true = np.array(lon[pcm_month.mask == False])
+		lat_true = np.array(lat[pcm_month.mask == False])
 
- # extent map
- ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
+	else: # year average
+		pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
 
- # draw land and ocean
- ax.add_feature(cartopy.feature.OCEAN)
- ax.add_feature(cartopy.feature.LAND)
- ax.coastlines(linewidth=0.5, color='black')
+		pcm_true = np.array(np.round(pcm_period[pcm_period.mask == False],2))
+		lon_true = np.array(lon[pcm_period.mask == False])
+		lat_true = np.array(lat[pcm_period.mask == False])  
 
- # compute a circle in axes coordinates
- theta = np.linspace(0, 2*np.pi, 100)
- center, radius = [0.5, 0.5], 0.5
- verts = np.vstack([np.sin(theta), np.cos(theta)]).T
- circle = mpath.Path(verts * radius + center)
- ax.set_boundary(circle, transform=ax.transAxes)
+    ## Mapping
+    # colormap
+    scmap_top = 2
+    s_bounds  = np.linspace(-scmap_top,scmap_top,9)
 
- # gridlines labels
- gl = ax.gridlines(draw_labels=True)
+    fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
 
- # legend
- cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
- cbar.set_label("PCM area (in C/m)", rotation=-90, labelpad=13)
+    # display points
+    sp = ax.scatter(lon_true,
+                lat_true,
+                c=pcm_true,
+                cmap="RdBu_r",
+                s=25,
+                edgecolor='black',
+                linewidth=0.1,
+                norm=colors.BoundaryNorm(boundaries=s_bounds, ncolors=256, extend='both'),
+                transform=ccrs.PlateCarree())
 
- plot_name = output_dir + "pcm_" + label_seasons[i]
- plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+    # extent map
+    ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
- print("pcm plot month " + label_seasons[i] + ": done!")
+    # draw land and ocean
+    ax.add_feature(cartopy.feature.OCEAN)
+    ax.add_feature(cartopy.feature.LAND)
+    ax.coastlines(linewidth=0.5, color='black')
+
+    # compute a circle in axes coordinates
+    theta = np.linspace(0, 2*np.pi, 100)
+    center, radius = [0.5, 0.5], 0.5
+    verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+    circle = mpath.Path(verts * radius + center)
+    ax.set_boundary(circle, transform=ax.transAxes)
+
+    # gridlines labels
+    gl = ax.gridlines(draw_labels=True)
+
+    # legend
+    cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
+    cbar.set_label(r'Temperature PCM (in °C)', rotation=-90, labelpad=13)
+
+ 	plot_name = output_dir + "pcm_month" + str(i+1)
+ 	plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+
+ 	print("pcm plot month " + str(i+1) + ": done!")

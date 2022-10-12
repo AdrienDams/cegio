@@ -2,7 +2,7 @@
 
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  
-#SBATCH --time=48:00:00
+#SBATCH --time=08:00:00
 #SBATCH --account=aa0049
 
 # set up
@@ -20,10 +20,10 @@ export permdir=${targetdir}/processed/permafrost #  output files for perma
 # make necessary directories
 mkdir -p ${targetdir} ${targetdir}/processed/season ${scratch_dir} ${permdir}
 
-echo "make seasons"
+#echo "make seasons"
 #${progdir}/make_season_mean_all.sh
 
-echo "make snowdepth means"
+#echo "make snowdepth means"
 #${progdir}/make_annual_mean_snowdepth.sh
 
 echo "make ground temperature"
@@ -34,10 +34,10 @@ ${progdir}/make_permafrost_extend.sh
 
 # look for 5 consicutives days of snow
 # output: nomber of days when is snow free in the year
-echo "make snow free day"
+#echo "make snow free day"
 
 for ((year=$startyear;year<=$endyear;year++)); do
- echo "year" $year
+ #echo "year" $year
 
  snowinfile=${scratch_dir}/${run_name}.swemerge.$year.nc
  snowoutfile=${permdir}/${run_name}.snowfreeday.5days.$year.nc

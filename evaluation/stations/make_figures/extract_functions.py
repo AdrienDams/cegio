@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from os.path import exists
 import netCDF4 as nc
+import sys
 
 def Date_transformer(abs_list,relative):
 
@@ -80,7 +81,7 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
 ## Extract files
 stationtmpfile = sys.argv[1]
 #stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
-datasettmp = nc.datasettmp(stationtmpfile)
+datasettmp = nc.Dataset(stationtmpfile)
 
 # Load variables
 data_obs   = datasettmp.variables['soiltemp'][:].T

@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2019.tmp.57_DOM02_004.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.tmp.57_DOM02_034.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -27,7 +27,6 @@ sta_lat   = np.array(dstation['lat'])
 sta_depth = np.array(dstation['depth'])
 sta_var   = dstation['soiltemp']
 ctsm_var  = dstation['ctsm_soiltemp']
-sta_var   = sta_var[:,:,0,:] # remove useless dimension
 
 # remove depth below usuable (before 242)
 max_depth = 153

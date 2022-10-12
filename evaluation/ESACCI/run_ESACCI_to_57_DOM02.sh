@@ -11,7 +11,7 @@ scratch_ESA="$scratch_dir/ESACCI"
 mkdir -p $modeloutput_dir
 mkdir -p $obsoutput_dir
 mkdir -p $scratch_ESA
-export startyear_esa=2001
+export startyear_esa=1997
 export endyear_esa=2019
 
 sbatch $cegio/evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh

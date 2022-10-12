@@ -19,7 +19,7 @@ for i in {0..0}; do
  depth=${depthlist[i]}
  echo $depth
 
- # loop over month
+ # loop over year
  for year in $( seq $startyear_esa $endyear_esa ) ; do
   input_ctsm=$data_folder/CTSM_regridded/TSOI.$depth.$run_name.$year.nc
   input_esa=$data_folder/ESACCI_regridded/TSOI.$depth.$run_name.$year.nc
@@ -40,7 +40,7 @@ done
 echo "TSOI done"
 
 ## ALT
-# loop over month
+# loop over year
 for year in $( seq $startyear_esa $endyear_esa ) ; do
  input_ctsm=$data_folder/CTSM_regridded/ALT.$run_name.$year.nc
  input_esa=$data_folder/ESACCI_regridded/ALT.$run_name.$year.nc
@@ -60,7 +60,7 @@ python $folder/averages_map_alt.py $input_ctsm_period $input_esa_period period
 echo "ALT done"
 
 ## PFR
-# loop over month
+# loop over year
 for year in $( seq $startyear_esa $endyear_esa ) ; do
  input_ctsm=$data_folder/CTSM_regridded/PFR.$run_name.$year.nc
  input_esa=$data_folder/ESACCI_regridded/PFR.$run_name.$year.nc

@@ -16,7 +16,7 @@ os.makedirs(output_dir, exist_ok=True)
 # -------------------------- DATA-Import from CSV --------------------------
 # 12 months for every point
 all_result = pd.DataFrame(np.array(
-    pd.read_csv("results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
+    pd.read_csv("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
                         columns=['year','station_lon','station_lat',
                                  'depth','measurement','simulation'])
 # --------------------------------------------------------------------------
@@ -43,6 +43,7 @@ label_months = ['January','February','March','April','May','June',
 fig, ax = plt.subplots()
 fig.set_figheight(10)
 fig.set_figwidth(15)
+nmonths=12
 r_value = np.zeros(nmonths)
 
 for i in range(nmonths):

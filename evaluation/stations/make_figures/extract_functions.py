@@ -7,16 +7,15 @@ import netCDF4 as nc
 import sys
 
 def Date_transformer(abs_list,relative):
-
+#
     result=[]
-
+#
     for i in range(int(len(abs_list)/12)):
-
+#
         for j in range(12):
-
+#
             result.append(relative+i)
-
-
+#
     return result
 
 # Loop through the data 
@@ -74,13 +73,13 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
     
 
     all_result=pd.DataFrame(np.array(list_all),columns=['year','station_lon','station_lat','depth','measurement','simulation'])
-    all_result.to_csv("results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False)
+    all_result.to_csv("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False)
 
     return all_result
              
 ## Extract files
 stationtmpfile = sys.argv[1]
-#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_004/stations-vs-ctsm.1979-2020.tmp.57_DOM02_004.nc"
+#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.tmp.57_DOM02_040.nc"
 datasettmp = nc.Dataset(stationtmpfile)
 
 # Load variables
@@ -103,7 +102,8 @@ date_list = Date_transformer(data_time,1979)
 # We check whether we have data from every month of a year for every grid point,
 # for all years. If this is not the case, this specific the data from that year
 # gets discarded. This creates a results.csv file.
-if exists("results.tmp." + os.environ['run_name'] + ".csv") == False:
+if exists("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv") == False:
+	print("Start data extraction")
 	master = Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data_qua)
 	print("Data extracted!")
 # --------------------------------------------------------------------------              

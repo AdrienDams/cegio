@@ -51,45 +51,45 @@ for i in range(nmonths+1):
 
     ## Mapping
     # colormap
-    scmap_top = 2
-    s_bounds  = np.linspace(-scmap_top,scmap_top,9)
+	scmap_top = 2
+	s_bounds  = np.linspace(-scmap_top,scmap_top,9)
 
-    fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
+	fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
 
-    # display points
-    sp = ax.scatter(lon_true,
-                lat_true,
-                c=pcm_true,
-                cmap="RdBu_r",
-                s=25,
-                edgecolor='black',
-                linewidth=0.1,
-                norm=colors.BoundaryNorm(boundaries=s_bounds, ncolors=256, extend='both'),
-                transform=ccrs.PlateCarree())
+	# display points
+	sp = ax.scatter(lon_true,
+				lat_true,
+				c=pcm_true,
+				cmap="RdBu_r",
+				s=25,
+				edgecolor='black',
+				linewidth=0.1,
+				norm=colors.BoundaryNorm(boundaries=s_bounds, ncolors=256, extend='both'),
+				transform=ccrs.PlateCarree())
 
-    # extent map
-    ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
+	# extent map
+	ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
-    # draw land and ocean
-    ax.add_feature(cartopy.feature.OCEAN)
-    ax.add_feature(cartopy.feature.LAND)
-    ax.coastlines(linewidth=0.5, color='black')
+	# draw land and ocean
+	ax.add_feature(cartopy.feature.OCEAN)
+	ax.add_feature(cartopy.feature.LAND)
+	ax.coastlines(linewidth=0.5, color='black')
 
-    # compute a circle in axes coordinates
-    theta = np.linspace(0, 2*np.pi, 100)
-    center, radius = [0.5, 0.5], 0.5
-    verts = np.vstack([np.sin(theta), np.cos(theta)]).T
-    circle = mpath.Path(verts * radius + center)
-    ax.set_boundary(circle, transform=ax.transAxes)
+	# compute a circle in axes coordinates
+	theta = np.linspace(0, 2*np.pi, 100)
+	center, radius = [0.5, 0.5], 0.5
+	verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+	circle = mpath.Path(verts * radius + center)
+	ax.set_boundary(circle, transform=ax.transAxes)
 
-    # gridlines labels
-    gl = ax.gridlines(draw_labels=True)
+	# gridlines labels
+	gl = ax.gridlines(draw_labels=True)
 
-    # legend
-    cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
-    cbar.set_label(r'Temperature PCM (in °C)', rotation=-90, labelpad=13)
+	# legend
+	cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
+	cbar.set_label(r'Temperature PCM (in °C)', rotation=-90, labelpad=13)
 
- 	plot_name = output_dir + "pcm_month" + str(i+1)
- 	plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+	plot_name = output_dir + "pcm_month" + str(i+1)
+	plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 
- 	print("pcm plot month " + str(i+1) + ": done!")
+	print("pcm plot month " + str(i+1) + ": done!")

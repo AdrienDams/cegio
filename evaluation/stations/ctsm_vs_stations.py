@@ -44,10 +44,10 @@ month = int(os.environ['month'])
 date_index = ((year-1979)*12)+month-1
 qua_min = 20.0 # minimum of days in a month to keep data
 
-# altitude air temperature correction
+# altitude air temperature correction (not used now)
 def air_correct(sta_alt,ctsm_alt):
  diff_alt = ctsm_alt-sta_alt
- return diff_alt*0.6
+ return diff_alt/100*0.6
 
 # fill arrays
 for i in range(len(index_table[:,0])):
@@ -57,12 +57,13 @@ for i in range(len(index_table[:,0])):
  for j in range(len(sta_depth)):
   qua_check = sta_qua[date_index,j,sta_index]
 
-  if( qua_check > qua_min ):
+  if( (qua_check > qua_min) &  (qua_check < 32) ):
    ctsm_depth_idx = np.argmin(np.abs(sta_depth[j]-ctsm_depth)) # take ctsm depth index closest to sta index
 
    if ( np.in1d(sta_depth[j],ctsm_depth) == True or sta_depth[j]==0):
    # same depth or first depth, only take depth which don't need interpolation
-    sta_ctsm_var[date_index,j,sta_index] = ctsm_var[0,ctsm_depth_idx,ctsm_index]+air_correct(sta_alt[sta_index],ctsm_alt[ctsm_index])
+    sta_ctsm_var[date_index,j,sta_index] = ctsm_var[0,ctsm_depth_idx,ctsm_index]
+    #+air_correct(sta_alt[sta_index],ctsm_alt[ctsm_index])
 
    else: # depth needing an interpolation
     if ( sta_depth[j] > np.max(ctsm_depth) ): # if station depth below max ctsm, continue
@@ -77,7 +78,7 @@ for i in range(len(index_table[:,0])):
      y = [ ctsm_depth[ctsm_depth_idx], ctsm_depth[ctsm_depth_idx+1] ]
 
     y_new = sta_depth[j]
-    x_new = np.round(np.interp(y_new, y, x),5)
-    sta_ctsm_var[date_index,j,sta_index] = x_new+air_correct(sta_alt[sta_index],ctsm_alt[ctsm_index])
+    x_new = np.round(np.interp(y_new, y, x),4)
+    sta_ctsm_var[date_index,j,sta_index] = x_new#+air_correct(sta_alt[sta_index],ctsm_alt[ctsm_index])
 
 dstation.close()

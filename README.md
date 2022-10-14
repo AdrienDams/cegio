@@ -67,7 +67,7 @@ sbatch ./evaluation/stations/make_figures/run_figures.sh
 
 2. Create splines graph, linear plot and trumpet curves for specific station
 ```
-sbatch ./evaluation/stations/make_figures/run_figures_station.sh
+./evaluation/stations/make_figures/run_figures_station.sh
 ```
 
 3. Create maps for CTSM vs. CALM

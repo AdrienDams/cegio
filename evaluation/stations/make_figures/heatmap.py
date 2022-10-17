@@ -13,13 +13,16 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_034/stations-vs-ctsm.1979-2020.tmp.57_DOM02_034.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.tmp.57_DOM02_040.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
 # output
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/heatmap/"
 os.makedirs(output_dir, exist_ok=True)
+
+# open index
+index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", delimiter=" ", dtype=int)
 
 # write variables stations
 sta_lon   = np.array(dstation['lon'])
@@ -36,7 +39,7 @@ ctsm_var  = ctsm_var[:,0:max_depth,:]
 
 # retrieve time index from year-month ctsm to station
 startperiod = 2000 
-endperiod   = 2011
+endperiod   = 2014
 nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*12)
 endindex   = ((endperiod-1979)*12)
@@ -47,30 +50,33 @@ q2_sta_list = []
 q3_sta_list = []
 q4_sta_list = []
 for i in range(np.size(sta_lon)):
-	if(sta_lon[i]>=0) & (sta_lon[i]<90):
-		q1_sta_list.append(i)
-	if(sta_lon[i]>=90) & (sta_lon[i]<180):
-		q2_sta_list.append(i)
-	if(sta_lon[i]<0) & (sta_lon[i]>=-90):
-		q3_sta_list.append(i)
-	if(sta_lon[i]<-90) & (sta_lon[i]>=-180):
-		q4_sta_list.append(i)
+	if i in index_table[:,0]:
+		if(sta_lon[i]>=0) & (sta_lon[i]<90):
+			q1_sta_list.append(i)
+		if(sta_lon[i]>=90) & (sta_lon[i]<180):
+			q2_sta_list.append(i)
+		if(sta_lon[i]<0) & (sta_lon[i]>=-90):
+			q3_sta_list.append(i)
+		if(sta_lon[i]<-90) & (sta_lon[i]>=-180):
+			q4_sta_list.append(i)
 
 sta_list = [q1_sta_list,q2_sta_list,q3_sta_list,q4_sta_list]
 
 for quarter in range(4):
-	sta_var_sta_avg  = np.average(sta_var[:,:,sta_list[quarter]], axis=2)
-	ctsm_var_sta_avg = np.average(ctsm_var[:,:,sta_list[quarter]], axis=2)
+	# station average
+	sta_var_sta_avg  = np.nanmean(sta_var[:,:,sta_list[quarter]], axis=2)
+	ctsm_var_sta_avg = np.nanmean(ctsm_var[:,:,sta_list[quarter]], axis=2)
 
 	# month period average
 	sta_var_months  = np.full((12,np.size(sta_depth)),np.nan)
 	ctsm_var_months = np.full((12,np.size(sta_depth)),np.nan)
 	for i in range(12):
-		sta_var_months[i,:]  = np.average(sta_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
-		ctsm_var_months[i,:] = np.average(ctsm_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
+		sta_var_months[i,:]  = np.nanmean(sta_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
+		ctsm_var_months[i,:] = np.nanmean(ctsm_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
 
-	sta_var_months  = np.where(sta_var_months != 0, sta_var_months, np.nan)
-	ctsm_var_months = np.where(ctsm_var_months != 0, ctsm_var_months, np.nan)
+	# don't include points with no recorded temperature stations
+	#sta_var_months  = np.where(sta_var_months != 0, sta_var_months, np.nan)
+	#ctsm_var_months = np.where(ctsm_var_months != 0, ctsm_var_months, np.nan)
 
 	# depth rebinning
 	depth_classes=8

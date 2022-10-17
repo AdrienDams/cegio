@@ -66,33 +66,37 @@ for i in range(np.size(sta_lon)):
 
 sta_list = [q1_sta_list,q2_sta_list,q3_sta_list,q4_sta_list]
 
+# depth rebinning
+depth_classes=8
+classes_size = int(sta_depth[-1]/depth_classes)
+sta_var_rebin  = np.full((np.shape(sta_var)[0],depth_classes,np.shape(sta_var)[2]),np.nan)
+ctsm_var_rebin = np.full((np.shape(ctsm_var)[0],depth_classes,np.shape(sta_var)[2]),np.nan)
+
+for d in range(depth_classes):
+	first_index = int(np.argwhere(sta_depth==(d)*classes_size))
+	last_index  = int(np.argwhere(sta_depth==(d+1)*classes_size))
+	sta_var_rebin[:,d,:]  = np.nanmean(sta_var[:,first_index:last_index,:],axis=1)	
+	ctsm_var_rebin[:,d,:] = np.nanmean(ctsm_var[:,first_index:last_index,:],axis=1)			
+
+# month period average
+sta_var_months  = np.full((12,depth_classes,np.shape(sta_var)[2]),np.nan)
+ctsm_var_months = np.full((12,depth_classes,np.shape(sta_var)[2]),np.nan)
+for m in range(12):
+	sta_var_months[m,:,:]  = np.nanmean(sta_var_rebin[m+startindex:m+endindex:12,:,:],axis=0) # start:stop:step
+	ctsm_var_months[m,:,:] = np.nanmean(ctsm_var_rebin[m+startindex:m+endindex:12,:,:],axis=0)
+
 for quarter in range(4):
 	# station average
-	sta_var_sta_avg  = np.nanmean(sta_var[:,:,sta_list[quarter]], axis=2)
-	ctsm_var_sta_avg = np.nanmean(ctsm_var[:,:,sta_list[quarter]], axis=2)
-
-	# month period average
-	sta_var_months  = np.full((12,np.size(sta_depth)),np.nan)
-	ctsm_var_months = np.full((12,np.size(sta_depth)),np.nan)
-	for i in range(12):
-		sta_var_months[i,:]  = np.nanmean(sta_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
-		ctsm_var_months[i,:] = np.nanmean(ctsm_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
-
-	# depth rebinning
-	depth_classes=8
-	classes_size = int(sta_depth[-1]/depth_classes)
-	sta_var_rebin  = np.full((12,depth_classes),np.nan)
-	ctsm_var_rebin = np.full((12,depth_classes),np.nan)
-
-	for i in range(depth_classes):
-		for j in range(12):
-			first_index = int(np.argwhere(sta_depth==(i)*classes_size))
-			last_index  = int(np.argwhere(sta_depth==(i+1)*classes_size))
-			sta_var_rebin[j,i]  = np.nanmean(sta_var_months[j,first_index:last_index])
-			ctsm_var_rebin[j,i] = np.nanmean(ctsm_var_months[j,first_index:last_index])
+	sta_var_true  = np.full((12,depth_classes),np.nan)
+	ctsm_var_true = np.full((12,depth_classes),np.nan)
+	for m in range(12):
+		for d in range(depth_classes):
+			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,sta_list[quarter]]))>=5):
+				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,sta_list[quarter]])
+				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,sta_list[quarter]])
 
 	# difference
-	diff = ctsm_var_rebin-sta_var_rebin
+	diff = ctsm_var_true-sta_var_true
 
 	# heatmap options
 	months_letter = ["J","F","M","A","M","J","J","A","S","O","N","D"]
@@ -103,7 +107,7 @@ for quarter in range(4):
 	f,(ax1,ax2,ax3) = plt.subplots(3,1, figsize=(5,10))
 
 	## plot 1
-	sns.heatmap(np.transpose(np.round(sta_var_rebin,1)), cmap=palette, center=0,
+	sns.heatmap(np.transpose(np.round(sta_var_true,1)), cmap=palette, center=0,
 		robust=True, linewidths=0.1, linecolor="k",square=True, 
 		yticklabels = top_depth_list, ax=ax1,
 		annot=True, annot_kws={'size': 6})
@@ -115,7 +119,7 @@ for quarter in range(4):
 	ax1.set_title("station soil temperature (in C)")
 
 	## plot 2
-	sns.heatmap(np.transpose(np.round(ctsm_var_rebin,1)), cmap=palette, center=0,
+	sns.heatmap(np.transpose(np.round(ctsm_var_true,1)), cmap=palette, center=0,
 		robust=True, linewidths=0.1, linecolor="k",square=True,
 		yticklabels = top_depth_list, ax=ax2,
 		annot=True, annot_kws={'size': 6})

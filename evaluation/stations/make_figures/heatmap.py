@@ -28,14 +28,18 @@ index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations
 sta_lon   = np.array(dstation['lon'])
 sta_lat   = np.array(dstation['lat'])
 sta_depth = np.array(dstation['depth'])
-sta_var   = dstation['soiltemp']
-ctsm_var  = dstation['ctsm_soiltemp']
+sta_var_data   = dstation['soiltemp']
+ctsm_var_data  = dstation['ctsm_soiltemp']
 
 # remove depth below usuable (before 242)
 max_depth = 153
 sta_depth = sta_depth[0:max_depth]
-sta_var   = sta_var[:,0:max_depth,:]
-ctsm_var  = ctsm_var[:,0:max_depth,:]
+sta_var_nomask   = sta_var_data[:,0:max_depth,:]
+ctsm_var_nomask  = ctsm_var_data[:,0:max_depth,:]
+
+# don't include points with no ctsm temperature
+sta_var  = np.ma.masked_array(sta_var_nomask, mask=ctsm_var_nomask.mask)
+ctsm_var = ctsm_var_nomask
 
 # retrieve time index from year-month ctsm to station
 startperiod = 2000 
@@ -73,10 +77,6 @@ for quarter in range(4):
 	for i in range(12):
 		sta_var_months[i,:]  = np.nanmean(sta_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
 		ctsm_var_months[i,:] = np.nanmean(ctsm_var_sta_avg[i+startindex:i+endindex:12,:],axis=0) # start:stop:step
-
-	# don't include points with no recorded temperature stations
-	#sta_var_months  = np.where(sta_var_months != 0, sta_var_months, np.nan)
-	#ctsm_var_months = np.where(ctsm_var_months != 0, ctsm_var_months, np.nan)
 
 	# depth rebinning
 	depth_classes=8

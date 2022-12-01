@@ -12,7 +12,7 @@ import sys
 # open files
 ctsmfile = sys.argv[1]
 esafile  = sys.argv[2]
-output_name = sys.argv[3]
+output_name = sys.argv[3] + "_ESAvsCTSM_TSOI"
 #ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/CTSM_regridded/TSOI.1m.57_DOM02_004.1997.nc"
 #esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/ESACCI_regridded/TSOI.1m.57_DOM02_004.1997.nc"
 #output_name = "1997"

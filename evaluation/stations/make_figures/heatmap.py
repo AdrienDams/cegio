@@ -140,7 +140,7 @@ for quarter in range(4):
 	ax3.set(xlabel="month", ylabel="depth (in cm)")
 	ax3.set_title("ctsm-stations soil temperature (in C)")
 
-	output_name = "quarter" + str(quarter+1)
+	output_name = "heatmap_quarter" + str(quarter+1)
 	plot_name = output_dir + output_name
 	plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 	plt.close()

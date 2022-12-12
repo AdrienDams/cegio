@@ -33,7 +33,7 @@ esa_var  = desa.variables[variable][0,:,:]
 lon = dctsm.variables['lon']
 lat = dctsm.variables['lat']
 
-area = np.array(darea.variables['cell_area'])/(6371 * 6371) # convert steradian to km2
+area = np.array(darea.variables['cell_area'])/10**6 # convert m2 to km2
 
 # masking
 thre_cont  = 90

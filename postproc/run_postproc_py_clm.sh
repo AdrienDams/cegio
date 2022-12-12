@@ -36,15 +36,15 @@ ${progdir}/make_permafrost_extend.sh
 # output: nomber of days when is snow free in the year
 #echo "make snow free day"
 
-for ((year=$startyear;year<=$endyear;year++)); do
+#for ((year=$startyear;year<=$endyear;year++)); do
  #echo "year" $year
 
- snowinfile=${scratch_dir}/${run_name}.swemerge.$year.nc
- snowoutfile=${permdir}/${run_name}.snowfreeday.5days.$year.nc
+ #snowinfile=${scratch_dir}/${run_name}.swemerge.$year.nc
+ #snowoutfile=${permdir}/${run_name}.snowfreeday.5days.$year.nc
  #cdo -select,name=H2OSNO ${datadir}/daily/${run_prefix}.$year* $snowinfile
 
  #python3 ${progdir}/end_snow_melt.py $snowinfile $snowoutfile
-done
+#done
 
 # maximum of soils that thaw in a year
 # compare to the hydrologic end of measurements

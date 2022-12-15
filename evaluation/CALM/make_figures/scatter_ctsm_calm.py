@@ -25,7 +25,7 @@ calm_lat = calm_table[:,1].astype('float64')
 calm_alt = calm_table[:,3:].astype('float64')/100
 ctsm_alt = ctsm_table.astype('float64')/100
 
-# difference
+# difference (not used yet)
 diff = np.zeros(np.shape(ctsm_alt))
 for i in range(np.shape(ctsm_alt)[0]):
 	for j in range(np.shape(ctsm_alt)[1]):
@@ -34,24 +34,37 @@ for i in range(np.shape(ctsm_alt)[0]):
 		else:
 			diff[i,j] = None
 
+# make two sides
+west = calm_lon<0
+east = calm_lon>0
+
 # stats
 #slope, intercept, r_value, p_value, std_err = stats.linregress(calm_alt,ctsm_alt)
 
 # scatter plot
-fig, ax = plt.subplots()
-fig.set_figheight(10)
-fig.set_figwidth(3)
+fig, (ax1, ax2) = plt.subplots(1, 2)
 
-sns.regplot(x = np.ma.masked_invalid(calm_alt[ctsm_alt>0]).flatten(),
-			y = np.ma.masked_invalid(ctsm_alt[ctsm_alt>0]).flatten())
+sns.regplot(x = calm_alt[np.where(west)].flatten(),
+			y = ctsm_alt[np.where(west)].flatten(),
+			scatter_kws={'s':2}, ax=ax1)
+
+sns.regplot(x = calm_alt[np.where(east)].flatten(),
+			y = ctsm_alt[np.where(east)].flatten(),
+			scatter_kws={'s':2}, ax=ax2)
+
+# title
+ax1.title.set_text('Western Arctic')
+ax2.title.set_text('Eastern Arctic')
 
 # labeling
-ax.set_xlabel(r' ALT from CALM in m',fontsize=14)
-ax.set_ylabel(r' ALT from CTSM in m ',fontsize=14)
+ax1.set_xlabel(r' ALT from CALM in m')
+ax1.set_ylabel(r' ALT from CTSM in m ')
+ax2.set_xlabel(r' ALT from CALM in m')
+ax2.set_ylabel(r' ALT from CTSM in m ')
 
-#plot options
-ax.set_xlim(0,3)
-ax.set_ylim(0,8)
+# axis options
+ax1.set_aspect('equal', adjustable='box')
+ax2.set_aspect('equal', adjustable='box')
 
 # save output
 plot_name = output_dir + "scatter_ctsm_calm"

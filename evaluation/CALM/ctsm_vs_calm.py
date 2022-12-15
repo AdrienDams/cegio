@@ -7,7 +7,7 @@ import sys
 
 # open files
 ctsmfile = sys.argv[1]
-#ctsmfile = "/work/aa0049/a271098/cegio/data/postproc/57_DOM02_004/processed/permafrost/57_DOM02_004.active_layer_depth.period.nc"
+#ctsmfile = "/work/aa0049/a271098/cegio/data/postproc/57_DOM02_001/processed/permafrost/57_DOM02_001.active_layer_depth.period.nc"
 latlonf  = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0.2000-12.nc"
 calmfile = os.environ['cegio'] + "/evaluation/CALM/CALM_Summary_table_simplified.csv"
 variable = "ALT"
@@ -29,9 +29,10 @@ calm_lat     = calm_table[:,1]
 
 # write dimensions calm
 ncalm = np.size(calm_lon)
+nyear = np.shape(ctsm_var)[0]
 
 # create text file column
-ctsm_to_calm = np.zeros([np.shape(calm_table)[0],np.shape(ctsm_var)[0]])
+ctsm_to_calm = np.zeros([ncalm,nyear])
 
 def closest_node(node, nodes):
 	closest_index = distance.cdist([node], nodes).argmin()
@@ -45,10 +46,11 @@ def closest_node(node, nodes):
 for i in range(ncalm):
 	calm_coord = (calm_lat[i], calm_lon_360[i])
 	nctsm = closest_node(calm_coord, ctsm_coord)
-	if(nctsm != None):
-		ctsm_to_calm[i,:] = ctsm_var[:,nctsm].data
-	else:
-		ctsm_to_calm[i,:] = None
+	for j in range(nyear):
+		if(nctsm != None and ctsm_var[j,nctsm] != None):
+			ctsm_to_calm[i,j] = ctsm_var[j,nctsm]
+		else:
+			ctsm_to_calm[i,j] = None
 
 np.savetxt(os.environ['cegio'] + "/evaluation/CALM/ctsm_to_calm_" + os.environ['run_name'] + ".csv", np.round(ctsm_to_calm*100), delimiter = ",", fmt="%s")
 

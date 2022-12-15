@@ -3,7 +3,7 @@
 
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  
-#SBATCH --time=08:00:00
+#SBATCH --time=01:00:00
 #SBATCH --account=aa0049
 
 folder=$cegio/evaluation/CALM/

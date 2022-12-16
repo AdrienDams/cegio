@@ -9,8 +9,8 @@ import os
 import sys
 
 # open files
-stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.pcm.57_DOM02_040.nc"
+#stationfile = sys.argv[1]
+stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.pcm.57_DOM02_001.nc"
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/pcm/"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -32,19 +32,15 @@ endindex   = ((endperiod-1979)*nmonths)
 
 # looping over every month + period
 for i in range(nmonths+1):
-
 	if(i<nmonths):
 		# month period average
 		pcm_month  = np.average(pcm[i+startindex:i+endindex:nmonths,:],axis=0)
-
 		# take only stations with values
 		pcm_true = np.array(np.round(pcm_month[pcm_month.mask == False],2))
 		lon_true = np.array(lon[pcm_month.mask == False])
 		lat_true = np.array(lat[pcm_month.mask == False])
-
 	else: # year average
 		pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
-
 		pcm_true = np.array(np.round(pcm_period[pcm_period.mask == False],2))
 		lon_true = np.array(lon[pcm_period.mask == False])
 		lat_true = np.array(lat[pcm_period.mask == False])  
@@ -61,7 +57,7 @@ for i in range(nmonths+1):
 				lat_true,
 				c=pcm_true,
 				cmap="RdBu_r",
-				s=25,
+				s=np.absolute(pcm_true)*10,
 				edgecolor='black',
 				linewidth=0.1,
 				norm=colors.BoundaryNorm(boundaries=s_bounds, ncolors=256, extend='both'),
@@ -84,6 +80,12 @@ for i in range(nmonths+1):
 
 	# gridlines labels
 	gl = ax.gridlines(draw_labels=True)
+
+	# legend point
+	#handles, labels = sp.legend_elements(prop="sizes", alpha=0.6, num=4)     
+	#labels = ["8", "16", "24"]     
+	#legend = ax.legend(handles, labels, loc="lower right", frameon=False)
+	#plt.legend(*sp.legend_elements("sizes", alpha=0.6, num=4), loc="lower right", frameon=False)
 
 	# legend
 	cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)

@@ -13,8 +13,8 @@ import sys
 ctsmfile = sys.argv[1]
 esafile  = sys.argv[2]
 output_name = sys.argv[3] + "_ESAvsCTSM_TSOI"
-#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/CTSM_regridded/TSOI.1m.57_DOM02_004.1997.nc"
-#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_004/ESACCI_regridded/TSOI.1m.57_DOM02_004.1997.nc"
+#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/CTSM_regridded/TSOI.1m.57_DOM02_001.1997.nc"
+#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/ESACCI_regridded/TSOI.1m.57_DOM02_001.1997.nc"
 #output_name = "1997"
 variable = "TSOI"
 
@@ -87,7 +87,7 @@ plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
 ## Mapping diff
-cmap_top = 8
+cmap_top = 8 # change here for colour bar
 fig = plt.figure(figsize=[5, 5], constrained_layout=True)
 
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.NorthPolarStereo())
@@ -118,7 +118,7 @@ ax.set_boundary(circle, transform=ax.transAxes)
 gl = ax.gridlines(draw_labels=True)
 
 # legend
-cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-4,cmap_top,7))
+cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,cmap_top,9))
 cbar.set_label(r"soil temperature in °C", rotation=-90, labelpad=13)
 
 plot_name = output_dir + output_name + ".diff"

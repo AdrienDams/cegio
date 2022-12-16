@@ -111,7 +111,7 @@ ctsm_pos_lab = legend_positions(years_months, ctsm_var_ravg)
 sta_pos_lab  = legend_positions(years_months, sta_var_ravg)
 ax.text(ctsm_pos_lab[0],ctsm_pos_lab[1],s="ctsm ouput",color="#AD885F")
 ax.text(sta_pos_lab[0],sta_pos_lab[1],s="station %s"%sys.argv[3],color="black")
-ax.text(sta_pos_lab[0],sta_pos_lab[1]-2,s="(%s"%lon+" %s"%lat+")",color="black")
+#ax.text(sta_pos_lab[0],sta_pos_lab[1]-2,s="(%s"%lon+" %s"%lat+")",color="black")
 
 # colorbar
 sm = ScalarMappable(cmap=cm, norm=plt.Normalize(-cmap_top,cmap_top))

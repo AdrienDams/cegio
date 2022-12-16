@@ -12,8 +12,8 @@ import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning) 
 
 # open netcdf
-#stationfile = sys.argv[1]
-stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.tmp.57_DOM02_001.nc"
+stationfile = sys.argv[1]
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.tmp.57_DOM02_001.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 

@@ -12,8 +12,8 @@ import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning) 
 
 # open netcdf
-stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.tmp.57_DOM02_040.nc"
+#stationfile = sys.argv[1]
+stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.tmp.57_DOM02_001.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -49,22 +49,17 @@ startindex = ((startperiod-1979)*12)
 endindex   = ((endperiod-1979)*12)
 
 # station selection
-q1_sta_list = []
-q2_sta_list = []
-q3_sta_list = []
-q4_sta_list = []
+east_sta_list = []
+west_sta_list = []
+
 for i in range(np.size(sta_lon)):
 	if i in index_table[:,0]:
-		if(sta_lon[i]>=0) & (sta_lon[i]<90):
-			q1_sta_list.append(i)
-		if(sta_lon[i]>=90) & (sta_lon[i]<180):
-			q2_sta_list.append(i)
-		if(sta_lon[i]<0) & (sta_lon[i]>=-90):
-			q3_sta_list.append(i)
-		if(sta_lon[i]<-90) & (sta_lon[i]>=-180):
-			q4_sta_list.append(i)
+		if(sta_lon[i]>=0):
+			east_sta_list.append(i)
+		if(sta_lon[i]<0):
+			west_sta_list.append(i)
 
-sta_list = [q1_sta_list,q2_sta_list,q3_sta_list,q4_sta_list]
+sta_list = [east_sta_list,west_sta_list]
 
 # depth rebinning
 depth_classes=8
@@ -85,15 +80,15 @@ for m in range(12):
 	sta_var_months[m,:,:]  = np.nanmean(sta_var_rebin[m+startindex:m+endindex:12,:,:],axis=0) # start:stop:step
 	ctsm_var_months[m,:,:] = np.nanmean(ctsm_var_rebin[m+startindex:m+endindex:12,:,:],axis=0)
 
-for quarter in range(4):
+for half in range(2):
 	# station average
 	sta_var_true  = np.full((12,depth_classes),np.nan)
 	ctsm_var_true = np.full((12,depth_classes),np.nan)
 	for m in range(12):
 		for d in range(depth_classes):
-			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,sta_list[quarter]]))>=5):
-				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,sta_list[quarter]])
-				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,sta_list[quarter]])
+			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,sta_list[half]]))>=5):
+				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,sta_list[half]])
+				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,sta_list[half]])
 
 	# difference
 	diff = ctsm_var_true-sta_var_true
@@ -140,10 +135,14 @@ for quarter in range(4):
 	ax3.set(xlabel="month", ylabel="depth (in cm)")
 	ax3.set_title("ctsm-stations soil temperature (in C)")
 
-	output_name = "heatmap_quarter" + str(quarter+1)
+	if (half==1):
+		output_name = "heatmap_east"
+	else:
+		output_name = "heatmap_west"
+
 	plot_name = output_dir + output_name
 	plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 	plt.close()
 
-	print("heatmap quarter " + str(quarter+1) + ": done!")
+	print(output_name + ": done!")
 

@@ -108,9 +108,9 @@ plt.scatter (xf2, -yf2)
 
 # area
 plt.fill(np.append(x_smooth1, x_smooth2[::-1]), np.append(-y_new1, -y_new2[::-1]), 'red', alpha = 0.2)
-plt.text(0.85, 0.5, "area: %s\N{DEGREE SIGN}C m"%round(pcm,2),horizontalalignment='center',\
-          verticalalignment='center', transform = ax.transAxes,\
-          bbox={'facecolor':'white','alpha':1,'edgecolor':'black','pad':1})
+#plt.text(0.85, 0.5, "area: %s\N{DEGREE SIGN}C m"%round(pcm,2),horizontalalignment='center',\
+#          verticalalignment='center', transform = ax.transAxes,\
+#          bbox={'facecolor':'white','alpha':1,'edgecolor':'black','pad':1})
 plt.title("station %s"%sys.argv[5] + " year %s"%year + " month %s"%month)
 
 # plot options

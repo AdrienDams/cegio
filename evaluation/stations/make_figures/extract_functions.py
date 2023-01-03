@@ -20,31 +20,31 @@ def Date_transformer(abs_list,relative):
 
 # Loop through the data 
 def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data_qua):
-
+#
     list_all=[]
-
+#
     for i in range(len(data_depth)):
         
         depth=data_depth[i]
-        
+#        
         for j in range(len(data_lon)):
-            
+#            
             station=[data_lon[j],data_lat[j]]
-           
+#           
             for z in range(0,len(date_list),12):
-                
+#                
                 date_start=date_list[z]
-
+#
                 index=z
                 checker1=True
                 checker2=True
-
+#
                 # Fills help_list until the next year starts, or there is an unfilled value
                 # Then the loop breaks. In the later case the months of that year get discarded
                 # and date_start==date_list[index]
                 help_list=[]
                 while (index<z+12) and (checker1==True and checker2==True):
-
+#
                     measurement=data_obs[j][i][index]
                     simulation=data_sim[j][i][index]
                     # minimum x records for every month
@@ -58,28 +58,25 @@ def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data
                                  round(depth,3),
                                  round(measurement,3),
                                  round(simulation,3)])
-                        
+#                        
                     checker1=bool(measurement < 1000)
                     checker2=bool(simulation  < 1000)
-
-                
+#               
                     index=index+1 
-                    
+#                   
                 if len(help_list)==12:  # if 12 values in a year
                     for item in help_list:
-                        
+#                        
                         list_all.append(item)
-
-    
 
     all_result=pd.DataFrame(np.array(list_all),columns=['year','station_lon','station_lat','depth','measurement','simulation'])
     all_result.to_csv("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False)
-
+#
     return all_result
              
 ## Extract files
 stationtmpfile = sys.argv[1]
-#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.tmp.57_DOM02_040.nc"
+#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_002/stations-vs-ctsm.1979-2020.tmp.57_DOM02_002.nc"
 datasettmp = nc.Dataset(stationtmpfile)
 
 # Load variables
@@ -102,7 +99,7 @@ date_list = Date_transformer(data_time,1979)
 # We check whether we have data from every month of a year for every grid point,
 # for all years. If this is not the case, this specific the data from that year
 # gets discarded. This creates a results.csv file.
-if exists("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv") == False:
+if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv") == False:
 	print("Start data extraction")
 	master = Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data_qua)
 	print("Data extracted!")

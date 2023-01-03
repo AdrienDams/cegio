@@ -32,8 +32,20 @@ ctsm_lat = dctsm.variables['lat']
 
 calm_lon = calm_table[:,2].astype('float64')
 calm_lat = calm_table[:,1].astype('float64')
-calm_alt = calm_table[:,3:].astype('float64')
 ctsm_alt = ctsm_table.astype('float64')
+
+calm_alt_outperiod = calm_table[:,3:].astype('float64')
+
+# limit calm to ctsm data (TDL: need to create an external function)
+startyear = int(os.environ['startyear'])
+endyear   = int(os.environ['endyear'])
+if startyear > 1990: startyearind=startyear-1990
+else: startyearind=0
+
+if endyear < 2021: endyearind=-(2021-endyear)
+else: endyearind=None # end (-1 not working)
+
+calm_alt = calm_alt_outperiod[:,startyearind:endyearind]
 
 # difference
 diff = np.zeros(np.shape(ctsm_alt))

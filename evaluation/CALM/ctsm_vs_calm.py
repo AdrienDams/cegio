@@ -6,7 +6,7 @@ import os
 import sys
 
 # open files
-ctsmfile = sys.argv[1]
+ctsmfile = sys.argv[1] # from startyear to endyear
 #ctsmfile = "/work/aa0049/a271098/cegio/data/postproc/57_DOM02_001/processed/permafrost/57_DOM02_001.active_layer_depth.period.nc"
 latlonf  = os.environ['cegio'] + "/data/" + os.environ['run_name'] + "/monthly/" + os.environ['run_name'] + ".clm2.h0.2000-12.nc"
 calmfile = os.environ['cegio'] + "/evaluation/CALM/CALM_Summary_table_simplified.csv"
@@ -16,10 +16,14 @@ dctsm   = nc.Dataset(ctsmfile, 'r') # read only
 dlatlon = nc.Dataset(latlonf, 'r') # read only
 calm_table = np.array(pandas.read_csv(calmfile, encoding="ISO-8859-1"))
 
+# decide start period
+startyear = int(os.environ['startyear'])
+if ( startyear < 1990): startyearind=1990-startyear
+
 # write variables ctsm outputs
 ctsm_lon   = dlatlon['lon']
 ctsm_lat   = dlatlon['lat']
-ctsm_var   = dctsm['ALT'][10:,:] # only take 1990-2021
+ctsm_var   = dctsm['ALT'][startyearind:,:] # only take from 1990
 ctsm_coord = np.transpose([ctsm_lat, ctsm_lon])
 
 # write variables calm

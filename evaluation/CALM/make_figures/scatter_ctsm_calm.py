@@ -22,8 +22,20 @@ os.makedirs(output_dir, exist_ok=True)
 # extract variables
 calm_lon = calm_table[:,2].astype('float64')
 calm_lat = calm_table[:,1].astype('float64')
-calm_alt = calm_table[:,3:].astype('float64')/100
 ctsm_alt = ctsm_table.astype('float64')/100
+
+calm_alt_outperiod = calm_table[:,3:].astype('float64')/100
+
+# limit calm to ctsm data (TDL: need to create an external function)
+startyear = int(os.environ['startyear'])
+endyear   = int(os.environ['endyear'])
+if startyear > 1990: startyearind=startyear-1990
+else: startyearind=0
+
+if endyear < 2021: endyearind=-(2021-endyear)
+else: endyearind=None # end (-1 not working)
+
+calm_alt = calm_alt_outperiod[:,startyearind:endyearind]
 
 # difference (not used yet)
 diff = np.zeros(np.shape(ctsm_alt))

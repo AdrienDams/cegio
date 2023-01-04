@@ -9,8 +9,8 @@ import os
 import sys
 
 # open files
-#stationfile = sys.argv[1]
-stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.pcm.57_DOM02_001.nc"
+stationfile = sys.argv[1]
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.pcm.57_DOM02_001.nc"
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/pcm/"
 os.makedirs(output_dir, exist_ok=True)
 

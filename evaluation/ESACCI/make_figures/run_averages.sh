@@ -9,13 +9,13 @@
 folder=$cegio/evaluation/ESACCI/make_figures
 data_folder=$cegio/data/ESACCI/$run_name
 declare -a depthlist=("1m" "2m" "5m" "10m")
-export startyear_esa=1997
-export endyear_esa=2019
+export startyear_esa=2000
+export endyear_esa=2001
 
 ## Soiltemp 
 # loop over depth
 # only take 1m because no significant difference between temperature depth compare to spread of location
-for i in {0..0}; do
+for i in {0..3}; do
  depth=${depthlist[i]}
  echo $depth
 
@@ -31,8 +31,8 @@ for i in {0..0}; do
  input_ctsm_period=$data_folder/CTSM_regridded/TSOI.$depth.$run_name.period.nc
  input_esa_period=$data_folder/ESACCI_regridded/TSOI.$depth.$run_name.period.nc
 
- ncea -O $data_folder/CTSM_regridded/TSOI.$depth.$run_name.????.nc -O $input_ctsm_period
- ncea -O $data_folder/ESACCI_regridded/TSOI.$depth.$run_name.????.nc -O $input_esa_period
+ ncea -O $data_folder/CTSM_regridded/TSOI.$depth.$run_name.????.nc $input_ctsm_period
+ ncea -O $data_folder/ESACCI_regridded/TSOI.$depth.$run_name.????.nc $input_esa_period
 
  python $folder/averages_map_soiltemp.py $input_ctsm_period $input_esa_period $depth
 
@@ -52,8 +52,8 @@ done
 input_ctsm_period=$data_folder/CTSM_regridded/ALT.$run_name.period.nc
 input_esa_period=$data_folder/ESACCI_regridded/ALT.$run_name.period.nc
 
-ncea -O $data_folder/CTSM_regridded/ALT.$run_name.????.nc -O $input_ctsm_period
-ncea -O $data_folder/ESACCI_regridded/ALT.$run_name.????.nc -O $input_esa_period
+ncea -O $data_folder/CTSM_regridded/ALT.$run_name.????.nc $input_ctsm_period
+ncea -O $data_folder/ESACCI_regridded/ALT.$run_name.????.nc $input_esa_period
 
 python $folder/averages_map_alt.py $input_ctsm_period $input_esa_period period
 
@@ -72,8 +72,8 @@ done
 input_ctsm_period=$data_folder/CTSM_regridded/PFR.$run_name.period.nc
 input_esa_period=$data_folder/ESACCI_regridded/PFR.$run_name.period.nc
 
-ncea -O $data_folder/CTSM_regridded/PFR.$run_name.????.nc -O $input_ctsm_period
-ncea -O $data_folder/ESACCI_regridded/PFR.$run_name.????.nc -O $input_esa_period
+ncea -O $data_folder/CTSM_regridded/PFR.$run_name.????.nc $input_ctsm_period
+ncea -O $data_folder/ESACCI_regridded/PFR.$run_name.????.nc $input_esa_period
 
 python $folder/averages_map_pfr.py $input_ctsm_period $input_esa_period period
 

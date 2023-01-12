@@ -30,7 +30,7 @@ measurement = np.round(all_result['measurement'],2)
 simulation  = np.round(all_result['simulation'],2)
 # --------------------------------------------------------------------------
 
-# ---------------------------- PLOT 1: MONTHS ------------------------------
+# -------------------------- PLOT 1: FULL YEAR -----------------------------
 
 # ---------------------------- Plot pre-options ----------------------------
 # plot colors
@@ -83,13 +83,12 @@ plt.close()
 
 print("months scatter plot: done!")
 
-# ---------------------------- PLOT 2: DEPTHS ------------------------------
+# ---------------------------- PLOT 2: MONTH ------------------------------
 
 # ---------------------------- Plot pre-options ----------------------------
-depth_bins   = [0,40,80,120,160,200,320,np.max(depth)]
-color_depths = ['#ffffd4','#fee391','#fec44f','#fe9929','#ec7014','#cc4c02',
-                '#8c2d04']
-label_depths = ['0-40cm','40-80cm','80-120cm','120-160cm','160-200cm','200-320cm',
+depth_bins   = [0,40,80,120,185,320,np.max(depth)]
+color_depths = ['#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#8c2d04']
+label_depths = ['0-40cm','40-80cm','80-120cm','120-185cm', '185-320cm',
             	'+320cm']
 
 # ----------------------------- Initialize plot ----------------------------
@@ -98,8 +97,8 @@ for month in range(nmonths):
 	fig.set_figheight(10)
 	fig.set_figwidth(15)
 	r_value = np.zeros(np.size(depth_bins)-1)
-
-	for i in range(np.size(depth_bins)-1): 								# don't take first one to get 7 bins
+#
+	for i in range(np.size(depth_bins)-1): # don't take first one to get 6 bins
 		ind_bin1 = np.where(depth==depth_bins[i])[0][0]
 		ind_bin2 = np.where(depth==depth_bins[i+1])[0][0]
 		

@@ -43,7 +43,13 @@ for i in range(nmonths+1):
 		pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
 		pcm_true = np.array(np.round(pcm_period[pcm_period.mask == False],2))
 		lon_true = np.array(lon[pcm_period.mask == False])
-		lat_true = np.array(lat[pcm_period.mask == False])  
+		lat_true = np.array(lat[pcm_period.mask == False])
+
+	# sort big points first
+	sort_indices = np.argsort(pcm_true)
+	pcm_true 	= np.array(pcm_true)[sort_indices]
+	lon_true 	= np.array(lon_true)[sort_indices]
+	lat_true 	= np.array(lat_true)[sort_indices]
 
     ## Mapping
     # colormap

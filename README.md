@@ -14,10 +14,16 @@ export run_name=*casename*
 export startyear=*yyyy*
 export endyear=*yyyy*
 
+export descriptiongrid=*descriptiongridname*
+export descriptionreg=*descriptiongridname*
+
 export cegio=$PWD
 export scratch_dir=*scratch_dir*
 ln -s *data_directory* data/$run_name
 ```
+
+`descriptiongrid` and `descriptionreg` are descriptions of the grid and domain you are using. Those tags are needed for the mappinng in *Mappings and plots* 3. and 4.
+
 ## Post-processing
 
 1. Extract desired variables
@@ -30,7 +36,7 @@ sbatch ./postproc/extract_variable.sh
 sbatch ./postproc/monthlyaverage.sh
 ```
 
-3.. Run post-processing. This includes:
+3. Run post-processing. This includes:
 - Compute season averages `make_season_mean_all.sh`
 - Compute snow depth averages `make_annual_mean_snowdepth.sh`
 - Extract MAGT and make year averages `make_magt.sh`

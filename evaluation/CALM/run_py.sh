@@ -1,6 +1,4 @@
 #!/bin/sh
-# (from A. Damseaux)
-
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  
 #SBATCH --time=01:00:00

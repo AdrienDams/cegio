@@ -1,4 +1,3 @@
-# (from A. Damseaux)
 # print a heatmap between modelled (from CTSM output) and observed (from station) data for all station
 
 import numpy as np

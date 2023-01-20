@@ -1,4 +1,3 @@
-# (from A. Damseaux)
 # script to produce one trumpet curve graph from CTSM output and stations data
 
 import numpy as np

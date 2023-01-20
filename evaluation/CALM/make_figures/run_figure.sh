@@ -4,8 +4,6 @@
 #SBATCH --time=48:00:00
 #SBATCH --account=aa0049
 
-# from A. Damseaux
-
 ## Init
 folder=$cegio/evaluation/CALM/make_figures
 modelinput_dir="$cegio/data/postproc/$run_name/processed/permafrost"

@@ -1,3 +1,5 @@
+# print a map of difference between CTSM and CALM stations
+
 import numpy as np
 import pandas
 import netCDF4 as nc

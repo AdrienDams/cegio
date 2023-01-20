@@ -1,3 +1,5 @@
+# print a scatter plot between CTSM and CALM stations
+
 import numpy as np
 import pandas
 from scipy import stats

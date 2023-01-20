@@ -1,4 +1,3 @@
-# (from A. Damseaux)
 # print a linear plot between modelled (from CTSM output) and observed data (from station)
 
 import numpy as np

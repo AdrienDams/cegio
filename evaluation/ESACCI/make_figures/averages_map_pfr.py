@@ -1,3 +1,5 @@
+# print map of CTSM, ESACCI interpolated on the CTSM grid and their difference of PFR
+
 import numpy as np
 import netCDF4 as nc
 import matplotlib.pyplot as plt

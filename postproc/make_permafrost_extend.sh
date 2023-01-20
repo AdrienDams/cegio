@@ -1,7 +1,5 @@
 #!/bin/bash
-# (from H. Matthes, modified for irregular grid by A. Damseaux)
-# calculate minimum and maximum ground t
-# compute permafrost
+# calculate minimum and maximum ground t and compute permafrost
 
 outdir=${targetdir}"/processed/permafrost"
 datadir=${datadir}"/daily"

@@ -1,4 +1,3 @@
-# (from A. Damseaux)
 # compute pcm area for every station
 
 import numpy as np

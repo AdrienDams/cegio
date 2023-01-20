@@ -1,4 +1,3 @@
-# (from A. Damseaux)
 # print only one spline graph
 
 import numpy as np

@@ -1,4 +1,3 @@
-# from A. Damseaux
 # print a table with modelled (from CTSM output) and observed (from station) data for each station
 
 import numpy as np

@@ -1,5 +1,4 @@
 #!/bin/sh
-# (from A. Damseaux)
 
 echo "Enter year (only for splines graph):" 
 

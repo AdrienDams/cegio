@@ -1,3 +1,5 @@
+# print a scatter plot between CTSM and station file
+
 import netCDF4 as nc
 import numpy as np
 import pandas as pd

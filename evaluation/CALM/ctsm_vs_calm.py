@@ -1,3 +1,5 @@
+# compute a .csv file with CTSM interpolated on CALM stations
+
 import numpy as np
 import pandas
 import netCDF4 as nc

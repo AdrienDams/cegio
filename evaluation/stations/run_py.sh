@@ -1,5 +1,4 @@
 #!/bin/sh
-# (from A. Damseaux)
 
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  

@@ -1,5 +1,4 @@
 #!/bin/bash
-# (from H. Matthes, modified for irregular grid by A. Damseaux)
 
 outdir=${targetdir}"/processed/permafrost"
 datadir=${datadir}"/daily"

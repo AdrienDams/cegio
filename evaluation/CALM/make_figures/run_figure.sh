@@ -11,10 +11,6 @@ modeloutput_dir="$cegio/data/CALM/$run_name/CTSM_regridded"
 mkdir -p $modeloutput_dir
 variable="ALT"
 
-## Description file
-descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
-descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
-
 # Input
 mkdir -p  $modelinput_dir/CALM_period
 cp $modelinput_dir/$run_name.active_layer_depth.199?.nc $modelinput_dir/CALM_period

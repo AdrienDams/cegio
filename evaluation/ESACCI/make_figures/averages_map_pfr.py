@@ -9,18 +9,16 @@ import cartopy.crs as ccrs
 import os
 import sys
 
+## Compute multi-masking
+
 # open files
 ctsmfile = sys.argv[1]
 esafile  = sys.argv[2]
 output_name = sys.argv[3] + "_ESAvsCTSM_PFR"
-#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/CTSM_regridded/PFR.57_DOM02_001.2001.nc"
-#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/ESACCI_regridded/PFR.57_DOM02_001.2001.nc"
-#output_name = "2001"
 variable = "PFR"
 
 dctsm = nc.Dataset(ctsmfile, 'r') # read only
-desa  = nc.Dataset(esafile, 'r') # read only
-darea = nc.Dataset("/work/aa0049/a271098/cegio/data/57_regridded.area.PFR.nc", 'r')
+desa  = nc.Dataset(esafile, 'r')
 
 # output
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/ESACCI/" + variable + "/"
@@ -32,8 +30,6 @@ esa_var  = desa.variables[variable][0,:,:]
 
 lon = dctsm.variables['lon']
 lat = dctsm.variables['lat']
-
-area = np.array(darea.variables['cell_area'])#/10**6 # convert m2 to km2
 
 # masking
 thre_cont  = 90
@@ -51,15 +47,30 @@ freecont = np.where((esa_free == 1) & (ctsm_continuous == 1),1,np.nan)
 disccont = np.where((esa_dcontinuous == 1) & (ctsm_continuous == 1),1,np.nan)
 discfree = np.where((esa_dcontinuous == 1) & (ctsm_free == 1),1,np.nan)
 
-# calculate permafrost extent area
-ctsm_pfr_area = 0
-esa_pfr_area  = 0
-for i in range(np.shape(ctsm_continuous)[0]):
-	for j in range(np.shape(ctsm_continuous)[1]):
-		if ctsm_continuous[i,j] == 1: 
-			ctsm_pfr_area = area[i,j] + ctsm_pfr_area
-		if (esa_continuous[i,j] == 1 or esa_dcontinuous[i,j] == 1) : 
-			esa_pfr_area = area[i,j] + esa_pfr_area
+## Compute permafrost extent area (we have to work with the original files, not the projection)
+
+# open files
+ctsm_pextent_file = sys.argv[4]
+esa_pextent_file  = sys.argv[5]
+ctsm_area_file = os.environ['cegio'] + "/data/grids/arctic2_57_DOM02.nc"
+esa_reso  = 1 # resolution in km2 of esa-cci products
+
+dctsm_pextent = nc.Dataset(ctsm_pextent_file, 'r')
+desa_pextent  = nc.Dataset(esa_pextent_file, 'r')
+dctsm_area = nc.Dataset(ctsm_area_file, 'r')
+
+# extract variables
+ctsm_pextent = dctsm_pextent.variables['TSOI'][0,:]-273.15 # remove useless dimension
+esa_pextent  = desa_pextent.variables[variable][0,:,:]
+ctsm_area = np.array(dctsm_area.variables['cell_area'])/1e6 # convert m2 to km2
+
+# masking
+ctsm_pextent_true = np.where(ctsm_pextent<0, 1, np.nan)
+esa_pextent_true  = np.where(esa_pextent>thre_cont, 1, np.nan)
+
+# calculate area
+ctsm_pfr_area = np.sum(ctsm_area[ctsm_pextent_true == 1])
+esa_pfr_area  = np.sum(esa_pextent_true == esa_reso)
 
 ## Mapping averages
 darkgreen  = colors.ListedColormap(['#1a9641'])
@@ -99,7 +110,7 @@ gl = ax.gridlines(draw_labels=True)
 # title with pfr extent
 ctsm_area = np.round(ctsm_pfr_area/1e6,3) # round
 esa_area  = np.round(esa_pfr_area/1e6,3)
-ax.set_title('Permafrost extent area: CTSM = %s'%ctsm_area +  ' vs ESACCI = %s'%esa_area +  ' 10e6 m2')
+ax.set_title('Permafrost extent area: CTSM = %s'%ctsm_area +  ' - ESACCI = %s'%esa_area +  ' 10e6 km2')
 
 plot_name = output_dir + output_name + ".diff"
 plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')

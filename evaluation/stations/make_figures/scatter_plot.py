@@ -17,18 +17,24 @@ os.makedirs(output_dir, exist_ok=True)
 
 # DATA-Import from CSV (12 months for every point)
 all_result = pd.DataFrame(np.array(
-    pd.read_csv("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
-                        columns=['year','station_lon','station_lat',
+    pd.read_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
+                        columns=['year','month','station_lon','station_lat',
                                  'depth','measurement','simulation'])
 
 # Make data lists
-year  = all_result['year'].astype(int)
-depth = all_result['depth']
-station_lon = np.round(all_result['station_lon'],2)
-station_lat = np.round(all_result['station_lat'],2)
-measurement = np.round(all_result['measurement'],2)
-simulation  = np.round(all_result['simulation'],2)
-nmonths=12
+year   = all_result['year'].astype(int)
+months = all_result['month'].astype(int)
+depth  = all_result['depth']
+station_lon = all_result['station_lon']
+station_lat = all_result['station_lat']
+measurement = all_result['measurement']
+simulation  = all_result['simulation']
+
+# Masked arrays with nan (-9999) values
+invalid = -9999
+valid_indices = (measurement != invalid) & (simulation != invalid)
+
+nmonths = 12
 
 #  PLOT 1: Months 
 
@@ -41,18 +47,18 @@ label_months = ['January','February','March','April','May','June',
 # Initialize plot 
 fig, ax = plt.subplots()
 fig.set_figheight(10)
-fig.set_figwidth(15)
+fig.set_figwidth(11)
 
 r_value = np.zeros(nmonths)
 
 for i in range(nmonths):
-	slope, intercept, r_value[i], p_value, std_err = stats.linregress(measurement[i:-1:nmonths],simulation[i:-1:nmonths])
-
-	sns.regplot(x = measurement[i:-1:nmonths],
-				y = simulation[i:-1:nmonths],
+	r_value[i], p_value = stats.pearsonr(measurement[i:-1:nmonths][valid_indices],simulation[i:-1:nmonths][valid_indices])
+#
+	sns.regplot(x = measurement[i:-1:nmonths][valid_indices],
+				y = simulation[i:-1:nmonths][valid_indices],
 				color = color_months[i],
 				label = label_months[i],
-				scatter_kws={'s':5,'alpha':0.6},
+				scatter_kws={'s':3,'alpha':0.3},
 				line_kws={'label':"Linear Reg"})
 
 # Plot post-options
@@ -93,15 +99,19 @@ spatial_color = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33']
 spatial_label = ['Alaska','Canadian Archipelago','European Russia','Western Siberia', \
 					'Central Siberia', 'Eastern Siberia']
 
-decades = range(np.min(year), np.max(year),10)
-if decades[-1] != np.max(year):
-	temporal_bins = np.append(decades,np.max(year))
+startyear = int(os.environ['startyear'])
+endyear   = int(os.environ['endyear'])
+if(endyear>np.max(year)): endyear = np.max(year)
+
+decades   = range(startyear, endyear,10)
+if decades[-1] != endyear:
+	temporal_bins = np.append(decades,endyear)
 else:
 	temporal_bins = decades 
 
-temporal_color_all = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33']
+temporal_color_all = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00'] # 4 decades max (I add one just in case)
 temporal_color = temporal_color_all[0:np.size(temporal_bins)-1]
-temporal_label = ['1980-1990','1990-2000','2000-2010','2010-2020']
+temporal_label = [str(temporal_bins[i]) + '-' + str(temporal_bins[i+1]) for i in range(len(temporal_bins)-1)]
 
 # create lists comprehension for looping
 bins = [depth_bins, spatial_bins, temporal_bins]
@@ -128,10 +138,10 @@ for variable_type in [0, 1, 2]:
 	for month in range(nmonths):
 		fig, ax = plt.subplots()
 		fig.set_figheight(10)
-		fig.set_figwidth(15)
+		fig.set_figwidth(11)
 		r_value = np.zeros(np.size(bins[variable_type])-1)
 
-		for i in range(np.size(bins[variable_type])-1): # don't take first one to get 6 bins
+		for i in range(np.size(bins[variable_type])-1): # don't take first one to get n bins
 			if variable_type == 1:
 				# Calculate the absolute difference between the target longitude and each element in the station_lon array
 				diff1 = np.abs(key_variables_srt[variable_type]-bins[variable_type][i])
@@ -142,15 +152,18 @@ for variable_type in [0, 1, 2]:
 			else:
 				ind_bin1 = np.where(key_variables_srt[variable_type]==bins[variable_type][i])[0][0]
 				ind_bin2 = np.where(key_variables_srt[variable_type]==bins[variable_type][i+1])[0][0]
+
+			valid_indices = (measurement_srt[ind_bin1:ind_bin2:nmonths+month] != invalid) \
+							 & (simulation_srt[ind_bin1:ind_bin2:nmonths+month] != invalid) # update invalid mask
 			
-			slope, intercept, r_value[i], p_value, std_err = \
-				stats.linregress(measurement_srt[ind_bin1:ind_bin2:nmonths+month],simulation_srt[ind_bin1:ind_bin2:nmonths+month])
+			r_value[i], p_value = stats.pearsonr(measurement_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
+				simulation_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices])
 			
-			sns.regplot(x = measurement_srt[ind_bin1:ind_bin2:nmonths+month],
-						y = simulation_srt[ind_bin1:ind_bin2:nmonths+month],
+			sns.regplot(x = measurement_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
+						y = simulation_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
 						color = colors[variable_type][i],
 						label = labels[variable_type][i],
-						scatter_kws={'s':5,'alpha':0.6},
+						scatter_kws={'s':3,'alpha':0.3},
 						line_kws={'label':"Linear Reg"})
 
 		# Plot post-options

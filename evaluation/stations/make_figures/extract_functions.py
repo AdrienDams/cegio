@@ -1,106 +1,63 @@
-# Import Packages
+# extract station data in a readable .csv format
+
 import numpy as np
 import pandas as pd
 import os
 from os.path import exists
 import netCDF4 as nc
 import sys
-
-def Date_transformer(abs_list,relative):
-#
-    result=[]
-#
-    for i in range(int(len(abs_list)/12)):
-#
-        for j in range(12):
-#
-            result.append(relative+i)
-#
-    return result
-
-# Loop through the data 
-def Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data_qua):
-#
-    list_all=[]
-#
-    for i in range(len(data_depth)):
-        
-        depth=data_depth[i]
-#        
-        for j in range(len(data_lon)):
-#            
-            station=[data_lon[j],data_lat[j]]
-#           
-            for z in range(0,len(date_list),12):
-#                
-                date_start=date_list[z]
-#
-                index=z
-                checker1=True
-                checker2=True
-#
-                # Fills help_list until the next year starts, or there is an unfilled value
-                # Then the loop breaks. In the later case the months of that year get discarded
-                # and date_start==date_list[index]
-                help_list=[]
-                while (index<z+12) and (checker1==True and checker2==True):
-#
-                    measurement=data_obs[j][i][index]
-                    simulation=data_sim[j][i][index]
-                    # minimum x records for every month
-                    # double check already made in ctsm_vs_stations.py
-                    if (data_qua[j][i][index] >= 20):
-                        if (measurement < 1000 and simulation < 1000) : # why 1000?
-                            help_list.append(
-                                [int(date_start),
-                                 round(station[0],3),
-                                 round(station[1],3),
-                                 round(depth,3),
-                                 round(measurement,3),
-                                 round(simulation,3)])
-#                        
-                    checker1=bool(measurement < 1000)
-                    checker2=bool(simulation  < 1000)
-#               
-                    index=index+1 
-#                   
-                if len(help_list)==12:  # if 12 values in a year
-                    for item in help_list:
-#                        
-                        list_all.append(item)
-
-    all_result=pd.DataFrame(np.array(list_all),columns=['year','station_lon','station_lat','depth','measurement','simulation'])
-    all_result.to_csv("/work/aa0049/a271098/cegio/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False)
-#
-    return all_result
-             
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="numpy")
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="numpy")
+ 
 ## Extract files
-stationtmpfile = sys.argv[1]
-#stationtmpfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_002/stations-vs-ctsm.1979-2020.tmp.57_DOM02_002.nc"
-datasettmp = nc.Dataset(stationtmpfile)
+station_file = sys.argv[1]
+dstation = nc.Dataset(station_file)
 
 # Load variables
-data_obs   = datasettmp.variables['soiltemp'][:].T
-time       = data_obs.shape[-1]
-data_time  = datasettmp.variables['time'][:]
-data_sim   = datasettmp.variables['ctsm_soiltemp'][:].T
-data_depth = datasettmp.variables['depth'][:]
-data_lon   = datasettmp.variables['lon'][:]
-data_lat   = datasettmp.variables['lat'][:]
-data_qua   = datasettmp.variables['quality'][:].T
+data_time	= dstation.variables['time'][:]
+data_sta	= np.around(dstation.variables['soiltemp'][:].T,3)
+data_ctsm	= np.around(dstation.variables['ctsm_soiltemp'][:].T,3)
+data_depth	= np.around(dstation.variables['depth'][:],3)
+data_lon	= np.around(dstation.variables['lon'][:],3)
+data_lat	= np.around(dstation.variables['lat'][:],3)
+data_qua	= dstation.variables['quality'][:].T
 
-datasettmp.close()
+dstation.close()
 
-# Assign dates (YYYY) to time data
-date_list = Date_transformer(data_time,1979)
-# --------------------------------------------------------------------------
+# Assign dates (YYYY) and month (MM) to time data
+years  = np.arange(1979, 2022)
+months = np.arange(1, 13)
 
-# --------------------- Extract data from NETCDF datasets ------------------
-# We check whether we have data from every month of a year for every grid point,
-# for all years. If this is not the case, this specific the data from that year
-# gets discarded. This creates a results.csv file.
-if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/results.tmp." + os.environ['run_name'] + ".csv") == False:
+data_year  = np.repeat(years, 12)
+data_month = np.tile(months, 2022-1979)
+
+# Check if file exists
+if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv") == False:
 	print("Start data extraction")
-	master = Extract_Depths(data_obs,data_sim,date_list,data_depth,data_lon,data_lat,data_qua)
+
+	# Loop through the data 
+	list_all=[]
+	print("station", end=' ', flush=True))
+	for i in range(len(data_lon)):
+		print(i, end=' ', flush=True))
+		for j in range(len(data_depth)):   
+			for k in range(0,len(data_year),12): # reduce loop time by checking only every year
+				if any(data_qua[i][j][k:k+12] >= 20): # only take value with more than 20 days of measurements
+					# we want to print a list of 12 entries for each month of this year/station/depth (even nan values)
+
+					for month in range(12):
+						list_all.append(
+						[int(data_year[k+month]),	int(data_month[k+month]),
+						data_lon[i], data_lat[i],
+						data_depth[j],
+						data_sta[i][j][k+month], data_ctsm[i][j][k+month]])
+
+	# Replace masked elements with NaN
+	list_all = np.ma.filled(list_all, fill_value=np.nan)
+	# Transform list into pd data frame
+	all_result=pd.DataFrame(np.array(list_all),columns=['data_year','data_month','data_lon','data_lat','data_depth','data_sta','data_ctsm'])
+	# Export to .csv file (na_rep is to replace empty elements by -9999)
+	all_result.to_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False,na_rep=-9999)
+
 	print("Data extracted!")
-# --------------------------------------------------------------------------              

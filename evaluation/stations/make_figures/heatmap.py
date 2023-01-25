@@ -12,7 +12,6 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.tmp.57_DOM02_001.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -41,8 +40,8 @@ sta_var  = np.ma.masked_array(sta_var_nomask, mask=ctsm_var_nomask.mask)
 ctsm_var = ctsm_var_nomask
 
 # retrieve time index from year-month ctsm to station
-startperiod = 2000 
-endperiod   = 2014
+startperiod = int(os.environ['startyear']) 
+endperiod   = int(os.environ['endyear'])
 nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*12)
 endindex   = ((endperiod-1979)*12)
@@ -134,7 +133,7 @@ for half in range(2):
 	ax3.set(xlabel="month", ylabel="depth (in cm)")
 	ax3.set_title("ctsm-stations soil temperature (in C)")
 
-	if (half==1):
+	if (half==0):
 		output_name = "heatmap_east"
 	else:
 		output_name = "heatmap_west"

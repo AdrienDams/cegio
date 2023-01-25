@@ -1,50 +1,42 @@
 #!/bin/bash
-#SBATCH --partition=compute
+#SBATCH --partition=shared
 #SBATCH --ntasks=1
 #SBATCH --time=8:00:00
 #SBATCH --account=aa0049
-#SBATCH --mem-per-cpu=8G
-
-# from A. Damseaux
-# Bash file to regrid (1) any nc and (2) a 57_DOM02 to a same regular lat lon grid
-# Run this file sbatch 57_DOM02_to_grid.sh
+#SBATCH --mem-per-cpu=60G
 
 ## Init
 modelinput_dir="$cegio/data/postproc/$run_name/processed/permafrost"
 modeloutput_dir="$cegio/data/ESACCI/$run_name/CTSM_regridded"
 obsinput_dir="$cegio/data/ESACCI/orig_data"
 obsoutput_dir="$cegio/data/ESACCI/$run_name/ESACCI_regridded"
-scratch_ESA="$scratch_dir/ESACCI"
 variable="PFR"
 maskvariable="TSOI"
 
-## Description file
-descriptiongrid="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_unstructured.txt_new_cdo"
-descriptionreg="/work/aa0049/a271098/output/description/description_ICON_arctic2_57_DOM02_reg.txt_new_cdo"
-
-for year in $( seq $startyear_esa $endyear_esa ) ; do # years available from ESACCI
- echo $year
- # Input
- modelfile="$modelinput_dir/$run_name.permafrost_extend.${year}.shallow.nc"
- obsfile="$obsinput_dir/ESACCI-*PFR*-$year-fv03.0.nc"
-
- # Output
- modeloutput=$variable.$run_name.$year.nc
- obsoutput=$variable.$run_name.$year.nc
-
- ## Take variable
- ncks -O -selvar,$maskvariable $modelfile $scratch_ESA/top_tmp.PFR.nc
-
- ## Regrid model
- cdo -r setgrid,$descriptiongrid -selvar,$maskvariable $scratch_ESA/top_tmp.PFR.nc $scratch_ESA/grid_tmp.PFR.nc # any file
-
- # Remap model
- cdo -r remapnn,$descriptionreg -selvar,$maskvariable $scratch_ESA/grid_tmp.PFR.nc $scratch_ESA/remap_tmp.PFR.nc
-
- # Crop model (not latitude above 90)
- ncks -O -F -d lat,0.,90. $scratch_ESA/remap_tmp.PFR.nc $modeloutput_dir/$modeloutput
-
- # Remap obs
- cdo -r -remapcon,$modeloutput_dir/$modeloutput $obsfile $obsoutput_dir/$obsoutput
-
+# Move files for period average model and obs
+for year in $( seq $startyear_esa $endyear_esa ) ; do
+	ln -sf $modelinput_dir/$run_name.permafrost_extend.${year}.shallow.nc $scratch_ESA/tmp/$run_name.$variable.$year.nc
+	ln -sf $obsinput_dir/ESACCI-*${variable}*-$year-fv03.0.nc $scratch_ESA/tmp/ESACCI.$variable.$year.nc
 done
+
+# Gather model
+ncecat -O $scratch_ESA/tmp/$run_name.$variable.*.nc $scratch_ESA/$run_name.$variable.period.nc
+
+# Extract variable model
+ncks -O -v $maskvariable $scratch_ESA/$run_name.$variable.period.nc $scratch_ESA/$run_name.$variable.extracted.nc
+
+# Period average model and obs
+ncra -O $scratch_ESA/$run_name.$variable.extracted.nc $modelinput_dir/$run_name.$variable.time_average.nc
+ncra -O $scratch_ESA/tmp/ESACCI.$variable.*.nc $obsinput_dir/ESACCI.$variable.$run_name.period.nc
+
+## Regrid model
+cdo -r setgrid,$descriptiongrid -selvar,$maskvariable $modelinput_dir/$run_name.$variable.time_average.nc $scratch_ESA/$run_name.grid.$variable.tmp.nc
+
+# Remap model
+cdo -r remapnn,$descriptionreg -selvar,$maskvariable $scratch_ESA/$run_name.grid.$variable.tmp.nc $scratch_ESA/$run_name.remap.$variable.tmp.nc
+
+# Crop model (not latitude above 90)
+ncks -O -F -d lat,0.,90. $scratch_ESA/$run_name.remap.$variable.tmp.nc $modeloutput_dir/$run_name.$variable.period.nc
+
+# Remap obs
+cdo -r -remapcon,$modeloutput_dir/$run_name.$variable.period.nc $obsinput_dir/ESACCI.$variable.$run_name.period.nc $obsoutput_dir/$run_name.$variable.period.nc

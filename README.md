@@ -1,5 +1,5 @@
 ## Requirements
-- Daily files from CTSM using 57_DOM02 domain (minimum 3 years period)
+- Daily files from CTSM (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)
 - python3 (numpy, pandas, scipy, matplotlib, seaborn, netCDF4, similaritymeasures, cartopy libraries)
 - cdo (minimum 2.0.3)
@@ -8,6 +8,7 @@
 - sbatch
 
 ## Install
+Replace `* *` with your own options
 
 ```
 export run_name=*casename*
@@ -61,7 +62,7 @@ sbatch ./evaluation/CALM/run_py.sh
 3. Run CTSM vs. ESACCI evaluation of 3 variables (TSOI, ALT and PFR)
 
 ```
-sbatch ./evaluation/ESACCI/run_ESACCI_to_57_DOM02.sh
+./evaluation/ESACCI/run_ESACCI_to_57_DOM02.sh
 ```
 
 ## Mappings and plots

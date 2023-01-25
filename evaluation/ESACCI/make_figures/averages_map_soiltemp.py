@@ -15,9 +15,6 @@ import sys
 ctsmfile = sys.argv[1]
 esafile  = sys.argv[2]
 output_name = sys.argv[3] + "_ESAvsCTSM_TSOI"
-#ctsmfile = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/CTSM_regridded/TSOI.1m.57_DOM02_001.1997.nc"
-#esafile  = "/work/aa0049/a271098/cegio/data/ESACCI/57_DOM02_001/ESACCI_regridded/TSOI.1m.57_DOM02_001.1997.nc"
-#output_name = "1997"
 variable = "TSOI"
 
 
@@ -29,7 +26,7 @@ output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/ESAC
 os.makedirs(output_dir, exist_ok=True)
 
 # extract variables
-ctsm_var = dctsm.variables[variable][0,:,:]-273.15 # remove useless dimension
+ctsm_var = dctsm.variables[variable][0,0,:,:]-273.15 # remove useless dimension
 esa_var  = desa.variables[variable][0,:,:]
 
 lon = dctsm.variables['lon']
@@ -42,7 +39,7 @@ all_var = [ctsm_var, esa_var]
 
 ## Mapping averages
 cmap_top = 20
-fig = plt.figure(figsize=[10, 5], constrained_layout=True)
+fig = plt.figure(figsize=[16, 8], constrained_layout=True)
 nax = 0
 
 for ax in ["ax1", "ax2"]:
@@ -90,7 +87,7 @@ plt.close()
 
 ## Mapping diff
 cmap_top = 8 # change here for colour bar
-fig = plt.figure(figsize=[5, 5], constrained_layout=True)
+fig = plt.figure(figsize=[8, 8], constrained_layout=True)
 
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.NorthPolarStereo())
 
@@ -102,7 +99,7 @@ filled = ax.pcolormesh(lon, lat, diff_var, cmap='RdBu_r',
 # extent map
 ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
-ax.set_title("difference")
+ax.set_title("CTSM - ESA-CCI")
 
 # draw land and ocean
 ax.add_feature(cartopy.feature.OCEAN)

@@ -62,7 +62,7 @@ desa_pextent  = nc.Dataset(esa_pextent_file, 'r')
 dctsm_area = nc.Dataset(ctsm_area_file, 'r')
 
 # extract variables
-ctsm_pextent = dctsm_pextent.variables['TSOI'][0,:]-273.15 # remove useless dimension
+ctsm_pextent = dctsm_pextent.variables['TSOI'][0,0,:]-273.15 # remove useless dimension
 esa_pextent  = desa_pextent.variables[variable][0,:,:]
 ctsm_area = np.array(dctsm_area.variables['cell_area'])/1e6 # convert m2 to km2
 
@@ -80,7 +80,7 @@ lightgreen = colors.ListedColormap(['#a6d96a'])
 darkred    = colors.ListedColormap(['#d7191c'])
 yellow     = colors.ListedColormap(['#ffffbf'])
 blue       = colors.ListedColormap(['#0571b0'])
-fig = plt.figure(figsize=[5, 5], constrained_layout=True)
+fig = plt.figure(figsize=[8, 8], constrained_layout=True)
 
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.NorthPolarStereo())
 
@@ -112,7 +112,7 @@ gl = ax.gridlines(draw_labels=True)
 # title with pfr extent
 ctsm_area = np.round(ctsm_pfr_area/1e6,3) # round
 esa_area  = np.round(esa_pfr_area/1e6,3)
-ax.set_title('Permafrost extent area: CTSM = %s'%ctsm_area +  ' - ESACCI = %s'%esa_area +  ' 10e6 km2')
+ax.set_title('Permafrost extent area:\n CTSM = %s'%ctsm_area +  ' - ESACCI = %s'%esa_area +  ' $10e6 km^{2}$')
 
 plot_name = output_dir + output_name + ".diff"
 plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')

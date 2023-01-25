@@ -1,18 +1,28 @@
 #!/bin/bash
-#SBATCH --partition=compute
-#SBATCH --ntasks=1
-#SBATCH --time=8:00:00
-#SBATCH --account=aa0049
-#SBATCH --mem-per-cpu=8G
 
-modeloutput_dir="$cegio/data/ESACCI/$run_name/CTSM_regridded"
-obsoutput_dir="$cegio/data/ESACCI/$run_name/ESACCI_regridded"
-scratch_ESA="$scratch_dir/ESACCI"
+# Bash file to regrid (1) a nc and (2) a 57_DOM02 to a same regular lat lon grid
+
+export modeloutput_dir="$cegio/data/ESACCI/$run_name/CTSM_regridded"
+export obsoutput_dir="$cegio/data/ESACCI/$run_name/ESACCI_regridded"
+export scratch_ESA="$scratch_dir/ESACCI"
 mkdir -p $modeloutput_dir
 mkdir -p $obsoutput_dir
 mkdir -p $scratch_ESA
-export startyear_esa=1997
-export endyear_esa=2019
+mkdir -p $scratch_ESA/tmp
+
+## Compute years
+startyear_esa=1997
+endyear_esa=2019
+if [ $startyear -gt $startyear_esa ]
+then
+    startyear_esa=$startyear
+fi
+if [ $endyear -lt $endyear_esa ]
+then
+    endyear_esa=$endyear
+fi
+export startyear_esa
+export endyear_esa
 
 sbatch $cegio/evaluation/ESACCI/ESACCI_to_57_DOM02.ALT.sh
 sbatch $cegio/evaluation/ESACCI/ESACCI_to_57_DOM02.PFR.sh
@@ -22,12 +32,6 @@ export toplayer=8
 export botlayer=9
 export inttop=0.23
 export intbot=0.77
-sbatch $cegio/evaluation/ESACCI/ESACCI_to_57_DOM02.GT.sh
-export depth=2m
-export toplayer=11
-export botlayer=12
-export inttop=0.21
-export intbot=0.79
 sbatch $cegio/evaluation/ESACCI/ESACCI_to_57_DOM02.GT.sh
 export depth=5m
 export toplayer=16

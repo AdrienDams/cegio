@@ -38,9 +38,9 @@ if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv
 
 	# Loop through the data 
 	list_all=[]
-	print("station", end=' ', flush=True))
+	print("station", end=' ', flush=True)
 	for i in range(len(data_lon)):
-		print(i, end=' ', flush=True))
+		print(i, end=' ', flush=True)
 		for j in range(len(data_depth)):   
 			for k in range(0,len(data_year),12): # reduce loop time by checking only every year
 				if any(data_qua[i][j][k:k+12] >= 20): # only take value with more than 20 days of measurements

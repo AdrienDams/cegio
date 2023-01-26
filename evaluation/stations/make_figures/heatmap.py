@@ -4,6 +4,7 @@ import numpy as np
 import netCDF4 as nc
 import seaborn as sns; sns.set_theme()
 import matplotlib.pylab as plt
+import matplotlib.ticker as ticker
 plt.style.use("seaborn")
 import os
 from os import sys
@@ -12,8 +13,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # open netcdf
 stationfile = sys.argv[1]
-
-dstation = nc.Dataset(stationfile, 'r') # read only
+dstation 	= nc.Dataset(stationfile, 'r') # read only
 
 # output
 output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/heatmap/"
@@ -47,17 +47,16 @@ startindex = ((startperiod-1979)*12)
 endindex   = ((endperiod-1979)*12)
 
 # station selection
-east_sta_list = []
-west_sta_list = []
+region_label = ['Alaska','Canadian_Archipelago','European_Russia','Western_Siberia', \
+					'Central_Siberia', 'Eastern_Siberia']
+regions = {1: [-180, -140], 2: [-140, 0], 3: [0, 50], 4: [50, 80], 5: [80, 125], 6: [125, 180]}
+region_ind = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
 
-for i in range(np.size(sta_lon)):
-	if i in index_table[:,0]:
-		if(sta_lon[i]>=0):
-			east_sta_list.append(i)
-		if(sta_lon[i]<0):
-			west_sta_list.append(i)
-
-sta_list = [east_sta_list,west_sta_list]
+for i, longitude in enumerate(sta_lon):
+    for r, bounds in regions.items():
+        if bounds[0] <= longitude < bounds[1]:
+            region_ind[r].append(i)
+            break
 
 # depth rebinning
 depth_classes=8
@@ -78,15 +77,15 @@ for m in range(12):
 	sta_var_months[m,:,:]  = np.nanmean(sta_var_rebin[m+startindex:m+endindex:12,:,:],axis=0) # start:stop:step
 	ctsm_var_months[m,:,:] = np.nanmean(ctsm_var_rebin[m+startindex:m+endindex:12,:,:],axis=0)
 
-for half in range(2):
+for region in range(1,7):
 	# station average
 	sta_var_true  = np.full((12,depth_classes),np.nan)
 	ctsm_var_true = np.full((12,depth_classes),np.nan)
 	for m in range(12):
 		for d in range(depth_classes):
-			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,sta_list[half]]))>=5):
-				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,sta_list[half]])
-				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,sta_list[half]])
+			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,region_ind[region]]))>=5):
+				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,region_ind[region]])
+				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,region_ind[region]])
 
 	# difference
 	diff = ctsm_var_true-sta_var_true
@@ -110,6 +109,7 @@ for half in range(2):
 	ax1.set(xlabel=None)
 	ax1.set(ylabel="depth (in cm)")
 	ax1.set_title("station soil temperature (in C)")
+	ax1.set_yticklabels(ax1.get_yticklabels(), fontsize=6, position=(0.02, 0))
 
 	## plot 2
 	sns.heatmap(np.transpose(np.round(ctsm_var_true,1)), cmap=palette, center=0,
@@ -122,6 +122,7 @@ for half in range(2):
 	ax2.set(xlabel=None)
 	ax2.set(ylabel="depth (in cm)")
 	ax2.set_title("ctsm soil temperature (in C)")
+	ax2.set_yticklabels(ax2.get_yticklabels(), fontsize=6, position=(0.02, 0))
 
 	## plot 3
 	sns.heatmap(np.transpose(np.round(diff,1)), cmap=palette, center=0,
@@ -132,15 +133,14 @@ for half in range(2):
 	# plot options
 	ax3.set(xlabel="month", ylabel="depth (in cm)")
 	ax3.set_title("ctsm-stations soil temperature (in C)")
+	ax3.set_yticklabels(ax3.get_yticklabels(), fontsize=6, position=(0.02, 0))
 
-	if (half==0):
-		output_name = "heatmap_east"
-	else:
-		output_name = "heatmap_west"
+	output_name = "heatmap_" +  region_label[region-1]
+	plt.suptitle(region_label[region-1])
+	plt.subplots_adjust(top=0.95)
 
 	plot_name = output_dir + output_name
 	plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 	plt.close()
 
 	print(output_name + ": done!")
-

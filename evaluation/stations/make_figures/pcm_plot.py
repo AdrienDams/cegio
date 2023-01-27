@@ -24,8 +24,8 @@ nstations = np.size(lon)
 nmonths   = 12
 
 # period
-startperiod = 1980 
-endperiod   = 2020
+startperiod = int(os.environ['startyear'])
+endperiod   = int(os.environ['endyear'])
 nyears = endperiod-startperiod
 startindex = ((startperiod-1979)*nmonths)
 endindex   = ((endperiod-1979)*nmonths)
@@ -40,21 +40,22 @@ for i in range(nmonths+1):
 		lon_true = np.array(lon[pcm_month.mask == False])
 		lat_true = np.array(lat[pcm_month.mask == False])
 	else: # year average
-		pcm_period = np.average(pcm[startindex:endindex+nmonths,:],axis=0)
+		pcm_period = np.average(pcm[startindex:endindex,:],axis=0)
 		pcm_true = np.array(np.round(pcm_period[pcm_period.mask == False],2))
 		lon_true = np.array(lon[pcm_period.mask == False])
 		lat_true = np.array(lat[pcm_period.mask == False])
 
 	# sort big points first
-	sort_indices = np.argsort(pcm_true)
-	pcm_true 	= np.array(pcm_true)[sort_indices]
-	lon_true 	= np.array(lon_true)[sort_indices]
-	lat_true 	= np.array(lat_true)[sort_indices]
+	#sort_indices = np.argsort(pcm_true)
+	#pcm_true 	= np.array(pcm_true)[sort_indices]
+	#lon_true 	= np.array(lon_true)[sort_indices]
+	#lat_true 	= np.array(lat_true)[sort_indices]
 
     ## Mapping
     # colormap
-	scmap_top = 2
-	s_bounds  = np.linspace(-scmap_top,scmap_top,9)
+	scmap_top = 8
+	s_bounds_lin = np.linspace(-scmap_top,scmap_top,9)
+	s_bounds_geo = [-8., -4., -2., -1.,  0.,  1.,  2.,  4.,  8.]
 
 	fig, ax = plt.subplots(1,1,figsize=(8,8),  subplot_kw={'projection': ccrs.NorthPolarStereo()})
 
@@ -63,10 +64,10 @@ for i in range(nmonths+1):
 				lat_true,
 				c=pcm_true,
 				cmap="RdBu_r",
-				s=np.absolute(pcm_true)*10,
+				#s=np.absolute(pcm_true)*10,
 				edgecolor='black',
 				linewidth=0.1,
-				norm=colors.BoundaryNorm(boundaries=s_bounds, ncolors=256, extend='both'),
+				norm=colors.BoundaryNorm(boundaries=s_bounds_geo, ncolors=256, extend='both'),
 				transform=ccrs.PlateCarree())
 
 	# extent map
@@ -94,7 +95,7 @@ for i in range(nmonths+1):
 	#plt.legend(*sp.legend_elements("sizes", alpha=0.6, num=4), loc="lower right", frameon=False)
 
 	# legend
-	cbar = fig.colorbar(sp, ax=ax, spacing='proportional', shrink=0.7)
+	cbar = fig.colorbar(sp, ax=ax, shrink=0.7)
 	cbar.set_label(r'Temperature PCM (in °C)', rotation=-90, labelpad=13)
 
 	plot_name = output_dir + "pcm_month" + str(i+1)

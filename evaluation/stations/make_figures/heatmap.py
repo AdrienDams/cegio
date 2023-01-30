@@ -78,28 +78,32 @@ for m in range(12):
 	ctsm_var_months[m,:,:] = np.nanmean(ctsm_var_rebin[m+startindex:m+endindex:12,:,:],axis=0)
 
 for region in range(1,7):
-	# station average
-	sta_var_true  = np.full((12,depth_classes),np.nan)
-	ctsm_var_true = np.full((12,depth_classes),np.nan)
+	# station average and RMSE
+	sta_var_mean  = np.full((12,depth_classes),np.nan)
+	ctsm_var_mean = np.full((12,depth_classes),np.nan)
+	rmse = np.full((12,depth_classes),np.nan)
 	for m in range(12):
 		for d in range(depth_classes):
 			if(np.count_nonzero(~np.isnan(sta_var_months[m,d,region_ind[region]]))>=5):
-				sta_var_true[m,d]  = np.nanmean(sta_var_months[m,d,region_ind[region]])
-				ctsm_var_true[m,d] = np.nanmean(ctsm_var_months[m,d,region_ind[region]])
+				sta_var_mean[m,d]  = np.nanmean(sta_var_months[m,d,region_ind[region]])
+				ctsm_var_mean[m,d] = np.nanmean(ctsm_var_months[m,d,region_ind[region]])
+				rmse[m,d] = np.sqrt(np.nanmean( \
+								np.square(ctsm_var_months[m,d,region_ind[region]]-sta_var_months[m,d,region_ind[region]])))
 
 	# difference
-	diff = ctsm_var_true-sta_var_true
+	diff = ctsm_var_mean-sta_var_mean
 
 	# heatmap options
 	months_letter = ["J","F","M","A","M","J","J","A","S","O","N","D"]
 	palette = sns.diverging_palette(240, 10, n=depth_classes, as_cmap=True)
+	palette_seq = sns.light_palette("seagreen", as_cmap=True)
 	top_depth_list = np.linspace(classes_size,int(sta_depth[-1]),depth_classes)
 
 	### heatmap
-	f,(ax1,ax2,ax3) = plt.subplots(3,1, figsize=(5,10))
+	f,(ax1,ax2,ax3,ax4) = plt.subplots(4,1, figsize=(5,13))
 
 	## plot 1
-	sns.heatmap(np.transpose(np.round(sta_var_true,1)), cmap=palette, center=0,
+	sns.heatmap(np.transpose(np.round(sta_var_mean,1)), cmap=palette, center=0,
 		robust=True, linewidths=0.1, linecolor="k",square=True, 
 		yticklabels = top_depth_list, ax=ax1,
 		annot=True, annot_kws={'size': 6})
@@ -109,10 +113,10 @@ for region in range(1,7):
 	ax1.set(xlabel=None)
 	ax1.set(ylabel="depth (in cm)")
 	ax1.set_title("station soil temperature (in C)")
-	ax1.set_yticklabels(ax1.get_yticklabels(), fontsize=6, position=(0.02, 0))
+	ax1.set_yticklabels(ax1.get_yticklabels(), fontsize=6, position=(0.02,0))
 
 	## plot 2
-	sns.heatmap(np.transpose(np.round(ctsm_var_true,1)), cmap=palette, center=0,
+	sns.heatmap(np.transpose(np.round(ctsm_var_mean,1)), cmap=palette, center=0,
 		robust=True, linewidths=0.1, linecolor="k",square=True,
 		yticklabels = top_depth_list, ax=ax2,
 		annot=True, annot_kws={'size': 6})
@@ -122,7 +126,7 @@ for region in range(1,7):
 	ax2.set(xlabel=None)
 	ax2.set(ylabel="depth (in cm)")
 	ax2.set_title("ctsm soil temperature (in C)")
-	ax2.set_yticklabels(ax2.get_yticklabels(), fontsize=6, position=(0.02, 0))
+	ax2.set_yticklabels(ax2.get_yticklabels(), fontsize=6, position=(0.02,0))
 
 	## plot 3
 	sns.heatmap(np.transpose(np.round(diff,1)), cmap=palette, center=0,
@@ -131,9 +135,22 @@ for region in range(1,7):
 		annot=True, annot_kws={'size': 6})
 
 	# plot options
-	ax3.set(xlabel="month", ylabel="depth (in cm)")
+	ax3.set(xticklabels=[])
+	ax3.set(xlabel=None)
+	ax3.set(ylabel="depth (in cm)")
 	ax3.set_title("ctsm-stations soil temperature (in C)")
-	ax3.set_yticklabels(ax3.get_yticklabels(), fontsize=6, position=(0.02, 0))
+	ax3.set_yticklabels(ax3.get_yticklabels(), fontsize=6, position=(0.02,0))
+
+	## plot 4
+	sns.heatmap(np.transpose(np.round(rmse,1)), cmap=palette_seq,
+		robust=True, linewidths=0.1, linecolor="k",square=True,
+		xticklabels = months_letter, yticklabels = top_depth_list, ax=ax4,
+		annot=True, annot_kws={'size': 6})
+
+	# plot options
+	ax4.set(xlabel="month", ylabel="depth (in cm)")
+	ax4.set_title("RMSE ctsm-stations")
+	ax4.set_yticklabels(ax4.get_yticklabels(), fontsize=6, position=(0.02,0))
 
 	output_name = "heatmap_" +  region_label[region-1]
 	plt.suptitle(region_label[region-1])

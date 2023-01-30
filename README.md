@@ -1,5 +1,3 @@
-![cegio_diagram](https://user-images.githubusercontent.com/24732655/215501329-ab2afd42-10c3-4fbf-b290-ca043104a89e.png)
-
 ## Requirements
 - Daily files from CTSM (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)
@@ -53,7 +51,6 @@ sbatch ./postproc/run_postproc_py_clm.sh
 
 1. Run CTSM vs in-situ stations
 ```
-
 sbatch ./evaluation/stations/run_py.sh
 ```
 

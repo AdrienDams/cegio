@@ -46,4 +46,3 @@ input_esa_orig=$cegio/data/ESACCI/orig_data/ESACCI.PFR.$run_name.period.nc
 python $folder/averages_map_pfr.py $input_ctsm $input_esa period $input_ctsm_orig $input_esa_orig
 
 echo "PFR done"
- 

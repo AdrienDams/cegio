@@ -46,7 +46,3 @@ for year in $( seq $startyear $endyear ) ; do
 
  done
 done
-
-
-
- 

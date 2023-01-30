@@ -18,4 +18,3 @@ for year in $( seq $startyear $endyear ) ; do
   ncea $directory/daily/${run_name}.clm2.h0.${year}-${i}-??.ext.nc -O $directory/monthly/${run_name}.clm2.h0.${year}-${i}.nc
  done
 done
-

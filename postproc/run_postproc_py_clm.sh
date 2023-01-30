@@ -58,4 +58,3 @@ for ((year=$startyear;year<=$endyear;year++)); do
 	
  python3 ${progdir}/active_layer.py $altinfile $altoutfile
 done
-

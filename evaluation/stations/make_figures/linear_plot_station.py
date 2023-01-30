@@ -122,4 +122,3 @@ plot_name = output_dir + "linear_station_%s"%sys.argv[3]
 plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 
 print("linear plot figure done!")
-

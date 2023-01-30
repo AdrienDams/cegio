@@ -59,9 +59,3 @@ for i in range(ncalm):
 			ctsm_to_calm[i,j] = None
 
 np.savetxt(os.environ['cegio'] + "/evaluation/CALM/ctsm_to_calm_" + os.environ['run_name'] + ".csv", np.round(ctsm_to_calm*100), delimiter = ",", fmt="%s")
-
-
-
-
-
-

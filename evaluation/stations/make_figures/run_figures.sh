@@ -21,7 +21,3 @@ python $folder/pcm_plot.py $input_pcm
 
 # scatter plots
 python $folder/scatter_plot.py
-
-
-
- 

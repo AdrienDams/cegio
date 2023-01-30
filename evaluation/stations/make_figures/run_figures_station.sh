@@ -36,7 +36,3 @@ else
  # trumpet curves
  #python $cegio/evaluation/stations/make_figures/trumpet_curves.py $station_id $ctsm_id $search
 fi
-
-
-
- 

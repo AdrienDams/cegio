@@ -1,3 +1,5 @@
+![cegio_diagram](https://user-images.githubusercontent.com/24732655/216118980-9d2e0f97-a540-448f-ac96-3f972270891b.png)
+
 ## Requirements
 - Daily files from CTSM (minimum 3 years period)
 - ESACCI and in-situ observation files (available by request at adamseau@awi.de)

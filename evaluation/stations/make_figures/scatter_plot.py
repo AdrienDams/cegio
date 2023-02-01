@@ -22,47 +22,58 @@ all_result = pd.DataFrame(np.array(
                                  'depth','measurement','simulation'])
 
 # Make data lists
-year   = all_result['year'].astype(int)
+years   = all_result['year'].astype(int)
 months = all_result['month'].astype(int)
-depth  = all_result['depth']
-station_lon = all_result['station_lon']
-station_lat = all_result['station_lat']
-measurement = all_result['measurement']
-simulation  = all_result['simulation']
+depths  = all_result['depth']
+station_lons = all_result['station_lon']
+station_lats = all_result['station_lat']
+measurements = all_result['measurement']
+simulations  = all_result['simulation']
 
 # Masked arrays with nan (-9999) values
 invalid = -9999
-valid_indices = (measurement != invalid) & (simulation != invalid)
+valid_indexes = (measurements != invalid) & (simulations != invalid) & (measurements > -50)
 
-nmonths = 12
+# Group arrays
+arrays = [years, months, depths, station_lons, station_lats, measurements, simulations, valid_indexes]
+year, month, depth, station_lon, station_lat, measurement, simulation, valid_index = 0, 1, 2, 3, 4, 5, 6, 7
 
-#  PLOT 1: Months 
+#  PLOT 1: Regions
 
 # Plot pre-options
-color_months = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c',
-                '#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']
-label_months = ['January','February','March','April','May','June',
-            	'July','August','September','October','November','December']
+region_bins  = [-180,-140,0,50,80,125,180]
+nregions = np.size(region_bins)-1
+indexes_reg = []
+region_color = ['#1f78b4','#33a02c','#ff7f00','#6a3d9a','#ffff99','#b15928']
+region_label = ['Alaska','Canadian_Archipelago','European_Russia','Western_Siberia', \
+					'Central_Siberia', 'Eastern_Siberia']
 
 # Initialize plot 
 fig, ax = plt.subplots()
 fig.set_figheight(10)
-fig.set_figwidth(11)
+fig.set_figwidth(10)
 
-r_value = np.zeros(nmonths)
+r_value = np.zeros(nregions)
 
-for i in range(nmonths):
-	r_value[i], p_value = stats.pearsonr(measurement[i:-1:nmonths][valid_indices],simulation[i:-1:nmonths][valid_indices])
-#
-	sns.regplot(x = measurement[i:-1:nmonths][valid_indices],
-				y = simulation[i:-1:nmonths][valid_indices],
-				color = color_months[i],
-				label = label_months[i],
-				scatter_kws={'s':3,'alpha':0.3},
+for region in range(nregions):
+	# group longitude indexes of same region
+	mask = np.logical_and(arrays[station_lon] >= region_bins[region], arrays[station_lon] < region_bins[region+1])
+	indexes_reg.append(np.where(mask)[0])
+
+	update_valid_ind = arrays[valid_index][indexes_reg[region]]
+	x_var = arrays[measurement][indexes_reg[region]][update_valid_ind]
+	y_var = arrays[simulation][indexes_reg[region]][update_valid_ind]
+
+	r_value[region], p_value = stats.pearsonr(x_var,y_var)
+
+	sns.regplot(x = x_var,
+				y = y_var,
+				color = region_color[region],
+				label = region_label[region],
+				scatter_kws={'s':2,'alpha':0.2},
 				line_kws={'label':"Linear Reg"})
 
 # Plot post-options
-
 # Grid on
 ax.set_xlim(-40,30)
 ax.set_ylim(-40,30)
@@ -73,108 +84,95 @@ ax.set_xlabel(r' Observation in °C',fontsize=14)
 ax.set_ylabel(r' Simulation in °C ',fontsize=14)
 
 # Legend
-ax.legend(loc = 2, bbox_to_anchor = (1,1))
+ax.legend(loc = 'lower right', bbox_to_anchor=(1.0, 0.0), ncol=1)
 leg = ax.get_legend()
 L_labels = leg.get_texts()
-for i in range(nmonths):
+for i in range(nregions):
 	L_labels[(2*i)+1].set_text(r'$R^2:{0:.2f}$'.format(r_value[i]))
 
 # Save fig
-plot_name = output_dir + "scatter_months"
+plot_name = output_dir + "scatter_regions"
 plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
-print("months scatter plot: done!")
+print("Regions scatter plot: done!")
 
-#  PLOT 2, 3, 4: Depths, Regions, Decades
+#  PLOT 2, 3, 4: Each Region by Depths, Months, Decades
 
 # Plot pre-options
-depth_bins   = [0,40,80,120,185,320,np.max(depth)]
+depth_bins   = [0,40,80,120,185,320,np.max(depths)]
 depths_color = ['#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#8c2d04']
 depths_label = ['0-40cm','40-80cm','80-120cm','120-185cm', '185-320cm',
             	'+320cm']
 
-spatial_bins  = [-180,-140,0,50,80,125,180]
-spatial_color = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33']
-spatial_label = ['Alaska','Canadian Archipelago','European Russia','Western Siberia', \
-					'Central Siberia', 'Eastern Siberia']
+month_bins   = np.arange(1,14) # 12 + 0 numbering + upper limit
+month_color = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c',
+                '#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']
+month_label = ['January','February','March','April','May','June',
+            	'July','August','September','October','November','December']
 
 startyear = int(os.environ['startyear'])
 endyear   = int(os.environ['endyear'])
-if(endyear>np.max(year)): endyear = np.max(year)
+if(endyear > np.max(arrays[year])): endyear = np.max(arrays[year])
 
 decades   = range(startyear, endyear,10)
 if decades[-1] != endyear:
-	temporal_bins = np.append(decades,endyear)
+	decade_bins = np.append(decades,endyear)
 else:
-	temporal_bins = decades 
+	decade_bins = decades 
 
-temporal_color_all = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00'] # 4 decades max (I add one just in case)
-temporal_color = temporal_color_all[0:np.size(temporal_bins)-1]
-temporal_label = [str(temporal_bins[i]) + '-' + str(temporal_bins[i+1]) for i in range(len(temporal_bins)-1)]
+decade_color_all = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00'] # 4 decades max (I add one just in case)
+decade_color = decade_color_all[0:np.size(decade_bins)-1]
+decade_label = [str(decade_bins[i]) + '-' + str(decade_bins[i+1]) for i in range(len(decade_bins)-1)]
 
 # create lists comprehension for looping
-bins = [depth_bins, spatial_bins, temporal_bins]
-colors = [depths_color, spatial_color, temporal_color]
-labels = [depths_label, spatial_label, temporal_label]
-key_variables = [depth, station_lon, year]
-key_variables_name = ["depths", "spatial", "temporal"]
+bins = [depth_bins, month_bins, decade_bins]
+colors = [depths_color, month_color, decade_color]
+labels = [depths_label, month_label, decade_label]
+key_variables = [depth, month, year]
+key_variables_name = ["depths", "months", "decades"]
 
 # Initialize plot
-for variable_type in [0, 1, 2]:
-	# Reorder data, get indices of elements in station_lon sorted in ascending order
-	sort_indices = np.argsort(key_variables[variable_type])
+for region in range(nregions):
+	# gather elements only from the region with previous masks
+	reg_arrays = [array.values[indexes_reg[region].astype(int)] for array in arrays]
 
-	# Sort the arrays using the sort indices
-	year_srt 		= np.array(year)[sort_indices]
-	depth_srt 		= np.array(depth)[sort_indices]
-	station_lon_srt = np.array(station_lon)[sort_indices]
-	station_lat_srt = np.array(station_lat)[sort_indices]
-	measurement_srt = np.array(measurement)[sort_indices]
-	simulation_srt	= np.array(simulation)[sort_indices]
-
-	key_variables_srt = [depth_srt, station_lon_srt, year_srt] # update list (TO-DO: need better approach)
-
-	for month in range(nmonths):
+	for variable_type in range(np.size(key_variables)):
 		fig, ax = plt.subplots()
 		fig.set_figheight(10)
-		fig.set_figwidth(11)
-		r_value = np.zeros(np.size(bins[variable_type])-1)
+		fig.set_figwidth(10)
 
-		for i in range(np.size(bins[variable_type])-1): # don't take first one to get n bins
-			if variable_type == 1:
-				# Calculate the absolute difference between the target longitude and each element in the station_lon array
-				diff1 = np.abs(key_variables_srt[variable_type]-bins[variable_type][i])
-				diff2 = np.abs(key_variables_srt[variable_type]-bins[variable_type][i+1])
-				# Find the index of the minimum difference (i.e. the closest longitude)
-				ind_bin1 = np.argmin(diff1)
-				ind_bin2 = np.argmin(diff2)
-			else:
-				ind_bin1 = np.where(key_variables_srt[variable_type]==bins[variable_type][i])[0][0]
-				ind_bin2 = np.where(key_variables_srt[variable_type]==bins[variable_type][i+1])[0][0]
+		bin_size = np.size(bins[variable_type])-1 # don't take first one to get n bins
+		r_value = np.zeros(bin_size)
 
-			valid_indices = (measurement_srt[ind_bin1:ind_bin2:nmonths+month] != invalid) \
-							 & (simulation_srt[ind_bin1:ind_bin2:nmonths+month] != invalid) # update invalid mask
+		for bin in range(bin_size):
+			mask = np.logical_and(reg_arrays[key_variables[variable_type]] >= bins[variable_type][bin], 
+									reg_arrays[key_variables[variable_type]] < bins[variable_type][bin+1])
+			indexes_bin = np.where(mask)[0]
+	
+			update_valid_ind = reg_arrays[valid_index][indexes_bin]
+			if np.size(update_valid_ind) == 0: continue
+
+			x_var = reg_arrays[measurement][indexes_bin][update_valid_ind]
+			y_var = reg_arrays[simulation][indexes_bin][update_valid_ind]
 			
-			r_value[i], p_value = stats.pearsonr(measurement_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
-				simulation_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices])
+			r_value[bin], p_value = stats.pearsonr(x_var,y_var)
 			
-			sns.regplot(x = measurement_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
-						y = simulation_srt[ind_bin1:ind_bin2:nmonths+month][valid_indices],
-						color = colors[variable_type][i],
-						label = labels[variable_type][i],
+			sns.regplot(x = x_var,
+						y = y_var,
+						color = colors[variable_type][bin],
+						label = labels[variable_type][bin],
 						scatter_kws={'s':3,'alpha':0.3},
 						line_kws={'label':"Linear Reg"})
 
 		# Plot post-options
-
 		# Grid on
 		ax.set_xlim(-40,30)
 		ax.set_ylim(-40,30)
 		plt.plot([-40, 30], [-40, 30], color="gray", linestyle="--", linewidth=1)
 
 		# Labeling
-		ax.set_title(str(label_months[month]),fontsize=14)
+		ax.set_title(str(region_label[region]),fontsize=14)
 		ax.set_xlabel(r' Observation in °C',fontsize=14)
 		ax.set_ylabel(r' Simulation in °C ',fontsize=14)
 
@@ -182,12 +180,16 @@ for variable_type in [0, 1, 2]:
 		ax.legend(loc = 2, bbox_to_anchor = (1,1))
 		leg = ax.get_legend()
 		L_labels = leg.get_texts()
-		for i in range(np.size(bins[variable_type])-1):
+		if (np.size(L_labels)-2*bin_size != 0):
+			print("Not enough data: pass graph " + str(region_label[region]) + " " + str(key_variables_name[variable_type]))
+			continue
+
+		for i in range(bin_size):
 			L_labels[(2*i)+1].set_text(r'$R^2:{0:.2f}$'.format(r_value[i]))
 
 		# Save fig
-		plot_name = output_dir + "scatter_" + str(key_variables_name[variable_type]) + ".month" + str(month+1)
+		plot_name = output_dir + "scatter_" + str(region_label[region]) + "_" + str(key_variables_name[variable_type])
 		plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
 		plt.close()
 
-		print(str(key_variables_name[variable_type]) + " scatter plot month" + str(month+1) + ": done!")
+		print(str(region_label[region]) + " " + str(key_variables_name[variable_type]) + " scatter plot: done!")

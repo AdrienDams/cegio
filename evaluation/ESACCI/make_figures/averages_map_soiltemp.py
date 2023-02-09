@@ -42,7 +42,9 @@ rmse = np.round(np.sqrt(np.mean(np.square(diff_var))),2)
 all_var = [ctsm_var, esa_var]
 
 ## Mapping averages
-cmap_top = 20
+cmap_top = 15
+ts_norm = colors.TwoSlopeNorm(vcenter=0, vmin=-cmap_top, vmax=cmap_top)
+
 fig = plt.figure(figsize=[16, 8], constrained_layout=True)
 nax = 0
 
@@ -51,8 +53,7 @@ for ax in ["ax1", "ax2"]:
  
  # shade variables
  filled = ax.pcolormesh(lon, lat, all_var[nax], cmap='RdBu_r',	
-						norm=colors.TwoSlopeNorm(vcenter = 0, vmin = -cmap_top, vmax = cmap_top),
-						transform=ccrs.PlateCarree())
+						norm=ts_norm, transform=ccrs.PlateCarree())
  
  # extent map
  ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
@@ -79,7 +80,8 @@ for ax in ["ax1", "ax2"]:
  
  # legend
  if nax==1:
-  cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,10,7))
+  # colour bar made from ESA data
+  cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,6,8), extend="both")
   cbar.set_label(r"soil temperature in °C", rotation=-90, labelpad=13)
  
  # next iteration
@@ -90,15 +92,15 @@ plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
 ## Mapping diff
-cmap_top = 8 # change here for colour bar
+cmap_top = 8
+ts_norm = colors.TwoSlopeNorm(vcenter=0, vmin=-cmap_top, vmax=cmap_top)
 fig = plt.figure(figsize=[8, 8], constrained_layout=True)
 
 ax = fig.add_subplot(1, 1, 1, projection=ccrs.NorthPolarStereo())
 
 # shade variables
 filled = ax.pcolormesh(lon, lat, diff_var, cmap='RdBu_r',	
-						norm=colors.TwoSlopeNorm(vcenter = 0, vmin = -cmap_top, vmax = cmap_top),
-						transform=ccrs.PlateCarree())
+						norm=ts_norm, transform=ccrs.PlateCarree())
 
 # extent map
 ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
@@ -121,11 +123,11 @@ ax.set_boundary(circle, transform=ax.transAxes)
 gl = ax.gridlines(draw_labels=True)
 
 # legend
-cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,cmap_top,9))
+cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,cmap_top,9), extend="both")
 cbar.set_label(r"soil temperature in °C", rotation=-90, labelpad=13)
 
 plot_name = output_dir + output_name + ".diff"
 plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
 plt.close()
 
-print("soiltemp average map " + output_name + ": done!")
+print("soiltemp average maps " + output_name + ": done!")

@@ -115,7 +115,7 @@ esa_area  = np.round(esa_pfr_area/1e6,3)
 ax.set_title('Permafrost extent area:\n CTSM = %s'%ctsm_area +  ' - ESACCI = %s'%esa_area +  ' $10e6 km^{2}$')
 
 plot_name = output_dir + output_name + ".diff"
-plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
 plt.close()
 
 print("permafrost map " + output_name + ": done!")

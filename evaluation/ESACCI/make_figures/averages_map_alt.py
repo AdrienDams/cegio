@@ -84,7 +84,7 @@ for ax in ["ax1", "ax2"]:
  nax = nax+1
 
 plot_name = output_dir + output_name + ".averages"
-plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
 plt.close()
 
 ## Mapping diff
@@ -120,10 +120,10 @@ gl = ax.gridlines(draw_labels=True)
 
 # legend
 cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-2,cmap_top,cmap_top+3))
-cbar.set_label(r"acive soil layer thickness in m", rotation=-90, labelpad=13)
+cbar.set_label(r"active soil layer thickness in m", rotation=-90, labelpad=13)
 
 plot_name = output_dir + output_name + ".diff"
-plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
 plt.close()
 
 print("alt average map " + output_name + ": done!")

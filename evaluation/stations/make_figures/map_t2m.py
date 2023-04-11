@@ -85,6 +85,6 @@ for i in range(nmonths+1):
 	cbar.set_label(r'Temperature difference (in °C)', rotation=-90, labelpad=13)
 
 	plot_name = output_dir + "diff_month" + str(i+1)
-	plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+	plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
 
 	print("diff plot month " + str(i+1) + ": done!")

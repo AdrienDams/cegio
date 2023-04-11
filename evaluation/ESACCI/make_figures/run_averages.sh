@@ -1,8 +1,9 @@
 #!/bin/sh
 #SBATCH --partition=shared
 #SBATCH --ntasks=1  
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH --account=aa0049
+#SBATCH --mem-per-cpu=60G
 
 folder=$cegio/evaluation/ESACCI/make_figures
 data_folder=$cegio/data/ESACCI/$run_name
@@ -18,7 +19,7 @@ for i in {0..2}; do
  input_ctsm=$data_folder/CTSM_regridded/$run_name.TSOI.$depth.period.nc
  input_esa=$data_folder/ESACCI_regridded/$run_name.TSOI.$depth.period.nc
 
- python $folder/averages_map_soiltemp.py $input_ctsm $input_esa $depth
+ #python $folder/averages_map_soiltemp.py $input_ctsm $input_esa $depth
 
 done
 echo "TSOI done"
@@ -29,7 +30,7 @@ echo "TSOI done"
 input_ctsm=$data_folder/CTSM_regridded/$run_name.ALT.period.nc
 input_esa=$data_folder/ESACCI_regridded/$run_name.ALT.period.nc
 
-python $folder/averages_map_alt.py $input_ctsm $input_esa period
+#python $folder/averages_map_alt.py $input_ctsm $input_esa period
 
 echo "ALT done"
 

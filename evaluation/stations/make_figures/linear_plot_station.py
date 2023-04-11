@@ -119,6 +119,6 @@ cbar = plt.colorbar(sm, pad=0.1)
 cbar.set_label('difference', rotation=270,labelpad=10)
 
 plot_name = output_dir + "linear_station_%s"%sys.argv[3]
-plt.savefig(plot_name+'.pdf', format='pdf', bbox_inches='tight')
+plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
 
 print("linear plot figure done!")

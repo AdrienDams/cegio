@@ -82,7 +82,7 @@ ax2.set_aspect('equal', adjustable='box')
 
 # save output
 plot_name = output_dir + "scatter_ctsm_calm"
-plt.savefig(plot_name +'.pdf', format='pdf', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
 plt.close()
 
 print("calm scatter: done!")

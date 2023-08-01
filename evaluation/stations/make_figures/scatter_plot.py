@@ -80,8 +80,8 @@ ax.set_ylim(-40,30)
 plt.plot([-40, 30], [-40, 30], color="gray", linestyle="--", linewidth=1)
 
 # Labeling
-ax.set_xlabel(r' Observation in °C',fontsize=14)
-ax.set_ylabel(r' Simulation in °C ',fontsize=14)
+ax.set_xlabel(r' Observed soil temperature in °C',fontsize=14)
+ax.set_ylabel(r' Modeled soil temperature in °C ',fontsize=14)
 
 # Legend
 ax.legend(loc = 'lower right', bbox_to_anchor=(1.0, 0.0), ncol=1)
@@ -173,8 +173,8 @@ for region in range(nregions):
 
 		# Labeling
 		ax.set_title(str(region_label[region]),fontsize=14)
-		ax.set_xlabel(r' Observation in °C',fontsize=14)
-		ax.set_ylabel(r' Simulation in °C ',fontsize=14)
+		ax.set_xlabel(r' Observed soil temperature in °C',fontsize=14)
+		ax.set_ylabel(r' Modeled soil temperature in °C ',fontsize=14)
 
 		# Legend
 		ax.legend(loc = 2, bbox_to_anchor = (1,1))

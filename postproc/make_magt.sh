@@ -40,3 +40,11 @@ ncrcat ${outdir}/${run_name}.????.magt.nc -O ${outdir}/${run_name}.${startyear}-
 
 # select all top layers
 cdo selindexbox,1,240860,1,20 ${outdir}/${run_name}.${startyear}-${endyear}.magt.nc ${outdir}/${run_name}.${startyear}-${endyear}.magt.shallow.nc
+
+# station file
+datadir=${cegio}"/data/stations/orig_data"
+
+cdo seldate,1979-07-01,2020-06-30 ${datadir}/arctic_stations.soiltemp.daily.1979-2020.nc ${datadir}/arctic_stations.soiltemp.july_start.nc
+cdo yearmean ${datadir}/arctic_stations.soiltemp.july_start.nc ${datadir}/arctic_stations.soiltemp.yearly.mean.nc
+cdo yearmax ${datadir}/arctic_stations.soiltemp.july_start.nc ${datadir}/arctic_stations.soiltemp.yearly.max.nc
+cdo yearmin ${datadir}/arctic_stations.soiltemp.july_start.nc ${datadir}/arctic_stations.soiltemp.yearly.min.nc

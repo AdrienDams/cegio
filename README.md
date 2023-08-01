@@ -40,11 +40,8 @@ sbatch ./postproc/monthlyaverage.sh
 ```
 
 3. Run post-processing. This includes:
-- Compute season averages `make_season_mean_all.sh`
-- Compute snow depth averages `make_annual_mean_snowdepth.sh`
 - Extract MAGT and make year averages `make_magt.sh`
 - Compute permafrost extent `make_permafrost_extend.sh`
-- Compute snow free day `end_snow_melt.py`
 - Compute Active Layer Thickness (ALT) `active_layer.py`
 ```
 sbatch ./postproc/run_postproc_py_clm.sh

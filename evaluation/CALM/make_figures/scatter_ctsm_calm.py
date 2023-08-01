@@ -51,34 +51,41 @@ for i in range(np.shape(ctsm_alt)[0]):
 # make two sides
 west = calm_lon<0
 east = calm_lon>0
+calm_west, ctsm_west = calm_alt[west].flatten(), ctsm_alt[west].flatten()
+calm_east, ctsm_east = calm_alt[east].flatten(), ctsm_alt[east].flatten()
 
-# stats
-#slope, intercept, r_value, p_value, std_err = stats.linregress(calm_alt,ctsm_alt)
+# calculate slopes and intercepts, removing missing values
+r_value_west, p_value_west = stats.pearsonr(calm_west[~np.isnan(calm_west) & ~np.isnan(ctsm_west)], ctsm_west[~np.isnan(calm_west) & ~np.isnan(ctsm_west)])
+r_value_east, p_value_east = stats.pearsonr(calm_east[~np.isnan(calm_east) & ~np.isnan(ctsm_east)], ctsm_east[~np.isnan(calm_east) & ~np.isnan(ctsm_east)])
 
-# scatter plot
-fig, (ax1, ax2) = plt.subplots(1, 2)
+# create scatter plot with two different colors
+fig, ax = plt.subplots()
+fig.set_figheight(8)
+fig.set_figwidth(8)
 
-sns.regplot(x = calm_alt[np.where(west)].flatten(),
-			y = ctsm_alt[np.where(west)].flatten(),
-			scatter_kws={'s':2}, ax=ax1)
+sns.regplot(calm_west, ctsm_west, label='Western Arctic', scatter_kws={'s':3,'alpha':0.5}, line_kws={'label':"Linear Reg"})
+sns.regplot(calm_east, ctsm_east, label='Eastern Arctic', scatter_kws={'s':3,'alpha':0.5}, line_kws={'label':"Linear Reg"})
 
-sns.regplot(x = calm_alt[np.where(east)].flatten(),
-			y = ctsm_alt[np.where(east)].flatten(),
-			scatter_kws={'s':2}, ax=ax2)
+# Labeling
+ax.set_xlabel(r' Observed ALT in m')
+ax.set_ylabel(r' Modeled ALT in m')
 
-# title
-ax1.title.set_text('Western Arctic')
-ax2.title.set_text('Eastern Arctic')
+# add x=y line
+min_val = 0
+max_val = max(np.max(calm_alt[~np.isnan(calm_alt)].flatten()), np.max(ctsm_alt[~np.isnan(ctsm_alt)].flatten()))
+plt.plot([min_val, max_val], [min_val, max_val], linestyle='--', linewidth=1, color='gray', alpha=0.8)
 
-# labeling
-ax1.set_xlabel(r' ALT from CALM in m')
-ax1.set_ylabel(r' ALT from CTSM in m ')
-ax2.set_xlabel(r' ALT from CALM in m')
-ax2.set_ylabel(r' ALT from CTSM in m ')
+# graph options
+ax.set_xlim([0, 3])
+ax.set_ylim([0, 8])
 
-# axis options
-ax1.set_aspect('equal', adjustable='box')
-ax2.set_aspect('equal', adjustable='box')
+# Legend
+ax.legend(loc = 'best', ncol=1)
+leg = ax.get_legend()
+L_labels = leg.get_texts()
+L_labels[1].set_text(r'$R^2:{0:.2f}$'.format(r_value_west))
+L_labels[3].set_text(r'$R^2:{0:.2f}$'.format(r_value_east))
+
 
 # save output
 plot_name = output_dir + "scatter_ctsm_calm"

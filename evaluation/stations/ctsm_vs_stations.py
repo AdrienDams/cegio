@@ -22,7 +22,8 @@ index_table = np.genfromtxt(os.environ['cegio'] + "/evaluation/stations/stations
 
 # open altitude values
 alt_file = os.environ['cegio'] + "/data/stations/station_list_AllArctic2022.txt"
-sta_alt  = np.array(pandas.read_fwf(alt_file, delimiter="\s+", engine="python",header=None))[:,4]
+sta_alt_df = pandas.read_csv(alt_file, delimiter=r"\s+", header=None)
+sta_alt = sta_alt_df.to_numpy()[:,4]
 
 ctsm_alt_file = os.environ['cegio'] + "/data/surfdata_map/57_DOM02_topo.nc"
 dalt = nc.Dataset(ctsm_alt_file, 'r') # read only

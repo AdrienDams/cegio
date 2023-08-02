@@ -12,7 +12,7 @@ outfile    = sys.argv[2]
 
 # max st file
 maxtfile   = sys.argv[1]
-maxtfile   = "/work/aa0049/a271098/cegio/data/postproc/57_DOM02_001/processed/permafrost/57_DOM02_001.1980.perma.timemax.shallow.nc"
+#maxtfile   = "/work/aa0049/a271098/cegio/data/postproc/57_DOM02_001/processed/permafrost/57_DOM02_001.1980.perma.timemax.shallow.nc"
 dsoilt     = xr.open_dataset(maxtfile, mask_and_scale=False)
 soilt      = dsoilt['TSOI']
 

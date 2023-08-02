@@ -119,6 +119,6 @@ plt.ylabel('depth (in cm)')
 plt.legend()
 
 plot_name = output_dir + "splines_station_%s"%sys.argv[5] + "-" + year + "-" + month
-plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
 
 print("splines graph figure done!")

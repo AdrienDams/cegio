@@ -89,7 +89,7 @@ L_labels[3].set_text(r'$R^2:{0:.2f}$'.format(r_value_east))
 
 # save output
 plot_name = output_dir + "scatter_ctsm_calm"
-plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight', dpi=300)
 plt.close()
 
 print("calm scatter: done!")

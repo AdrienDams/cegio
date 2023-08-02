@@ -157,7 +157,7 @@ for region in range(1,7):
 	plt.subplots_adjust(top=0.95)
 
 	plot_name = output_dir + output_name
-	plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
+	plt.savefig(plot_name +'.png', format='png', bbox_inches='tight', dpi=300)
 	plt.close()
 
 	print(output_name + ": done!")

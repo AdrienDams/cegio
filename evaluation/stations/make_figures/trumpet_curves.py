@@ -179,6 +179,6 @@ plt.grid(True, color = "grey", linestyle = "-.", alpha=0.2)
 plt.axvline(x=0, color="black", linestyle=":")
 
 plot_name = output_dir + "trumpet_curves_%s"%sys.argv[3]
-plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
 
 print("trumpet curves figure done!")

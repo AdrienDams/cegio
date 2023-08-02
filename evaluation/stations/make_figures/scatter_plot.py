@@ -92,7 +92,7 @@ for i in range(nregions):
 
 # Save fig
 plot_name = output_dir + "scatter_regions"
-plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
 plt.close()
 
 print("Regions scatter plot: done!")
@@ -189,7 +189,7 @@ for region in range(nregions):
 
 		# Save fig
 		plot_name = output_dir + "scatter_" + str(region_label[region]) + "_" + str(key_variables_name[variable_type])
-		plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
+		plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
 		plt.close()
 
 		print(str(region_label[region]) + " " + str(key_variables_name[variable_type]) + " scatter plot: done!")

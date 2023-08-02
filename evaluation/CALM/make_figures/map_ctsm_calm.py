@@ -104,7 +104,7 @@ cbar_filled = fig.colorbar(scatter, ax=ax, boundaries=s_bounds, fraction=0.05)
 cbar_filled.set_label(r"difference of ALT (CTSM - CALM) in m", rotation=-90, labelpad=13)
 
 plot_name = output_dir + "map_ctsm_calm"
-plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight', dpi=300)
 plt.close()
 
 print("calm map: done!")

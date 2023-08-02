@@ -88,7 +88,7 @@ for ax in ["ax1", "ax2"]:
  nax = nax+1
 
 plot_name = output_dir + output_name + ".averages"
-plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight', dpi=300)
 plt.close()
 
 ## Mapping diff
@@ -127,7 +127,7 @@ cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(-cmap_top,cmap_top,9),
 cbar.set_label(r"soil temperature in °C", rotation=-90, labelpad=13)
 
 plot_name = output_dir + output_name + ".diff"
-plt.savefig(plot_name +'.png', format='png', bbox_inches='tight')
+plt.savefig(plot_name +'.png', format='png', bbox_inches='tight', dpi=300)
 plt.close()
 
 print("soiltemp average maps " + output_name + ": done!")

@@ -99,6 +99,6 @@ for i in range(nmonths+1):
 	cbar.set_label(r'Temperature PCM (in °C)', rotation=-90, labelpad=13)
 
 	plot_name = output_dir + "pcm_month" + str(i+1)
-	plt.savefig(plot_name+'.png', format='png', bbox_inches='tight')
+	plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
 
 	print("pcm plot month " + str(i+1) + ": done!")

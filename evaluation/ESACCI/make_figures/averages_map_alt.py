@@ -36,6 +36,8 @@ lat = dctsm.variables['lat']
 
 # difference
 diff_var = ctsm_var[:,:] - esa_var[:,:]
+absolute_average = np.round(np.mean(np.abs(diff_var)),2)
+rmse = np.round(np.sqrt(np.mean(np.square(diff_var))),2)
 
 all_var = [ctsm_var, esa_var]
 
@@ -101,7 +103,7 @@ filled = ax.pcolormesh(lon, lat, diff_var, cmap='RdBu_r',
 # extent map
 ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
-ax.set_title("CTSM - ESA-CCI")
+ax.set_title("CTSM - ESA-CCI (GAA = %s"%absolute_average + " , RMSE = %s"%rmse + ")")
 
 # draw land and ocean
 ax.add_feature(cartopy.feature.OCEAN)

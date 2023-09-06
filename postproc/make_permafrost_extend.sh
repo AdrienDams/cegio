@@ -35,7 +35,7 @@ while [ "$d" != $enddate ]; do
   ncatted -O -a axis,levgrnd,m,c,"Z" ${outdir}/${run_name}.$year.perma.timemax.nc
   ncatted -O -a axis,levgrnd,m,c,"Z" ${outdir}/${run_name}.$year.perma.timemax.shallow.nc
 
-  # calculate the vertmin of the maximum temp (minimum or maximum through all layers)
+  # calculate the vertmin of the maximum temp (minimum through all layers)
   cdo -O vertmin ${outdir}/${run_name}.$year.perma.timemax.nc ${outdir}/${run_name}.$year.perma.vertmin.nc
   cdo -O vertmin ${outdir}/${run_name}.$year.perma.timemax.shallow.nc ${outdir}/${run_name}.$year.perma.vertmin.shallow.nc
   

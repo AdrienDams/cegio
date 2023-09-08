@@ -80,7 +80,7 @@ for ax in ["ax1", "ax2"]:
  # legend
  if nax==1:
   cbar = fig.colorbar(filled, ax=ax, boundaries=np.linspace(0,cmap_top,cmap_top+1))
-  cbar.set_label(r"acive soil layer thickness in m", rotation=-90, labelpad=13)
+  cbar.set_label(r"active soil layer thickness in m", rotation=-90, labelpad=13)
  
  # next iteration
  nax = nax+1

@@ -19,7 +19,7 @@ os.makedirs(output_dir, exist_ok=True)
 all_result = pd.DataFrame(np.array(
     pd.read_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",sep=',',header=None)),
                         columns=['year','month','station_lon','station_lat',
-                                 'depth','measurement','simulation'])
+                                 'depth','measurement','simulation','altitude','station_id'])
 
 # Make data lists
 years   = all_result['year'].astype(int)
@@ -29,14 +29,16 @@ station_lons = all_result['station_lon']
 station_lats = all_result['station_lat']
 measurements = all_result['measurement']
 simulations  = all_result['simulation']
+altitudes    = all_result['altitude']
+station_ids  = all_result['station_id']
 
 # Masked arrays with nan (-9999) values
 invalid = -9999
 valid_indexes = (measurements != invalid) & (simulations != invalid) & (measurements > -50)
 
 # Group arrays
-arrays = [years, months, depths, station_lons, station_lats, measurements, simulations, valid_indexes]
-year, month, depth, station_lon, station_lat, measurement, simulation, valid_index = 0, 1, 2, 3, 4, 5, 6, 7
+arrays = [years, months, depths, station_lons, station_lats, measurements, simulations, altitudes, station_ids, valid_indexes]
+year, month, depth, station_lon, station_lat, measurement, simulation, altitude, station_id, valid_index = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 
 #  PLOT 1: Regions
 
@@ -97,7 +99,62 @@ plt.close()
 
 print("Regions scatter plot: done!")
 
-#  PLOT 2, 3, 4: Each Region by Depths, Months, Decades
+# PLOT 2: Altitudes
+
+altitudes_bins  = [0,100,200,400,800,1000]
+naltitudes = np.size(altitudes_bins)-1
+indexes_alt = []
+altitudes_color = ['#01665e','#5ab4ac','#f6e8c3','#d8b365','#8c510a']
+altitudes_label = ['0-100m','100-200m','200-400m','400-800m','800m +']
+
+# Initialize plot
+fig, ax = plt.subplots()
+fig.set_figheight(10)
+fig.set_figwidth(10)
+
+r_value = np.zeros(naltitudes)
+
+for alt in range(len(altitudes_bins)-1):
+	mask = np.logical_and(arrays[altitude] >= altitudes_bins[alt], arrays[altitude] < altitudes_bins[alt + 1])
+	indexes_alt.append(np.where(mask)[0])
+
+	update_valid_ind = arrays[valid_index][indexes_alt[alt]]
+	x_var = arrays[measurement][indexes_alt[alt]][update_valid_ind]
+	y_var = arrays[simulation][indexes_alt[alt]][update_valid_ind]
+	print(alt,np.shape(x_var))
+
+	r_value[alt], p_value = stats.pearsonr(x_var,y_var)
+
+	sns.regplot(
+		x=x_var,
+		y=y_var,
+		color=altitudes_color[alt],
+		label=altitudes_label[alt],
+		scatter_kws={'s': 2, 'alpha': 0.2},
+		line_kws={'label': "Linear Reg"})
+
+# Plot options for altitude ranges
+ax.set_xlim(-40, 30)
+ax.set_ylim(-40, 30)
+ax.plot([-40, 30], [-40, 30], color="gray", linestyle="--", linewidth=1)
+
+ax.set_xlabel(r'Observed soil temperature in °C', fontsize=14)
+ax.set_ylabel(r'Modeled soil temperature in °C', fontsize=14)
+
+ax.legend(loc='lower right', bbox_to_anchor=(1.0, 0.0), ncol=1)
+leg = ax.get_legend()
+L_labels = leg.get_texts()
+for i in range(len(altitudes_bins) - 1):
+    L_labels[(2 * i) + 1].set_text(r'$R^2:{0:.2f}$'.format(r_value[i]))
+
+# Save fig
+plot_name = output_dir + "scatter_altitudes"
+plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)
+plt.close()
+
+print("Altitudes scatter plot: done!")
+
+#  PLOT 3, 4, 5: Each Region by Depths, Months, Decades
 
 # Plot pre-options
 depth_bins   = [0,40,80,120,185,320,np.max(depths)]

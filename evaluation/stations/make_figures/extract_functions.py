@@ -25,6 +25,11 @@ data_qua	= dstation.variables['quality'][:].T
 
 dstation.close()
 
+# open altitude values
+alt_file = os.environ['cegio'] + "/data/stations/station_list_AllArctic2022.txt"
+sta_alt_df = pd.read_csv(alt_file, delimiter=r"\s+", header=None)
+sta_alt = sta_alt_df.to_numpy()[:,4]
+
 # Assign dates (YYYY) and month (MM) to time data
 years  = np.arange(1979, 2022)
 months = np.arange(1, 13)
@@ -51,12 +56,13 @@ if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv
 						[int(data_year[k+month]),	int(data_month[k+month]),
 						data_lon[i], data_lat[i],
 						data_depth[j],
-						data_sta[i][j][k+month], data_ctsm[i][j][k+month]])
+						data_sta[i][j][k+month], data_ctsm[i][j][k+month],
+						sta_alt[i], i])
 
 	# Replace masked elements with NaN
 	list_all = np.ma.filled(list_all, fill_value=np.nan)
 	# Transform list into pd data frame
-	all_result=pd.DataFrame(np.array(list_all),columns=['data_year','data_month','data_lon','data_lat','data_depth','data_sta','data_ctsm'])
+	all_result=pd.DataFrame(np.array(list_all),columns=['data_year','data_month','data_lon','data_lat','data_depth','data_sta','data_ctsm','alt','station_id'])
 	# Export to .csv file (na_rep is to replace empty elements by -9999)
 	all_result.to_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False,na_rep=-9999)
 

@@ -44,30 +44,33 @@ nstations_tsa = np.size(dstation_tsa['station'])
 txt_file_tsoi = []
 txt_file_tsa = []
 
+
 def closest_node(node, nodes, orig_index, var):
-    closest_index = distance.cdist([node], nodes).argmin()
-    # only print if distance between (1) lat_ctsm and lat_stat and (2) lon_ctsm and lon_stat is < 0.5 degree
-    if ( (np.round(nodes[closest_index,0]) == np.round(node[0])) & (np.round(nodes[closest_index,1]) == np.round(node[1])) ):
-     if ( var[0,:,closest_index].max() < 400 ): # exclude nodata values in TSOI (be sure that at least one value is below 400)
-      if ( pct_glacier[i] < gla_limit ): # exclude points on glacier
-       return orig_index, closest_index
-      else:
-       return "", ""
-     else:
-      return "", ""
-    else:
-     return "", ""
+	closest_index = distance.cdist([node], nodes).argmin()
+	# Calculate the Euclidean distance
+	dist = np.linalg.norm(node - nodes[closest_index, :])
+    
+	if dist < 0.5:  # Check if the distance is less than 0.5 degrees
+		if var[0, :, closest_index].max() < 400:  # Exclude nodata values in TSOI
+			if pct_glacier[i] < gla_limit:  # Exclude points on glacier
+				return orig_index, closest_index
+			else:
+				return "", ""
+		else:
+			return "", ""
+	else:
+		return "", ""
 
 # go through all tsoi temperature stations
 for i in range(nstations_tsoi):
- sta_coord = (sta_lat_tsoi[i], sta_lon_tsoi_360[i])
- txt_file_tsoi.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var_tsoi))
+	sta_coord = (sta_lat_tsoi[i], sta_lon_tsoi_360[i])
+	txt_file_tsoi.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var_tsoi))
 
 np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.txt", txt_file_tsoi, fmt="%s")
 
 # go through all tsa temperature stations
 for i in range(nstations_tsa):
- sta_coord = (sta_lat_tsa[i], sta_lon_tsa_360[i])
- txt_file_tsa.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var_tsa))
+	sta_coord = (sta_lat_tsa[i], sta_lon_tsa_360[i])
+	txt_file_tsa.append(closest_node(sta_coord, ctsm_coord, i, ctsm_var_tsa))
 
 np.savetxt(os.environ['cegio'] + "/evaluation/stations/stations_ctsm_indexes.t2m.txt", txt_file_tsa, fmt="%s")

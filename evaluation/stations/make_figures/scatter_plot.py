@@ -121,7 +121,6 @@ for alt in range(len(altitudes_bins)-1):
 	update_valid_ind = arrays[valid_index][indexes_alt[alt]]
 	x_var = arrays[measurement][indexes_alt[alt]][update_valid_ind]
 	y_var = arrays[simulation][indexes_alt[alt]][update_valid_ind]
-	print(alt,np.shape(x_var))
 
 	r_value[alt], p_value = stats.pearsonr(x_var,y_var)
 

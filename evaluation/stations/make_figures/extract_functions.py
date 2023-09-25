@@ -38,32 +38,31 @@ data_year  = np.repeat(years, 12)
 data_month = np.tile(months, 2022-1979)
 
 # Check if file exists
-if exists(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv") == False:
-	print("Start data extraction")
+print("Start data extraction")
 
-	# Loop through the data 
-	list_all=[]
-	print("station", end=' ', flush=True)
-	for i in range(len(data_lon)):
-		print(i, end=' ', flush=True)
-		for j in range(len(data_depth)):   
-			for k in range(0,len(data_year),12): # reduce loop time by checking only every year
-				if any(data_qua[i][j][k:k+12] >= 20): # only take value with more than 20 days of measurements
-					# we want to print a list of 12 entries for each month of this year/station/depth (even nan values)
+# Loop through the data 
+list_all=[]
+print("station", end=' ', flush=True)
+for i in range(len(data_lon)):
+	print(i, end=' ', flush=True)
+	for j in range(len(data_depth)):   
+		for k in range(0,len(data_year),12): # reduce loop time by checking only every year
+			if any(data_qua[i][j][k:k+12] >= 20): # only take value with more than 20 days of measurements
+				# we want to print a list of 12 entries for each month of this year/station/depth (even nan values)
 
-					for month in range(12):
-						list_all.append(
-						[int(data_year[k+month]),	int(data_month[k+month]),
-						data_lon[i], data_lat[i],
-						data_depth[j],
-						data_sta[i][j][k+month], data_ctsm[i][j][k+month],
-						sta_alt[i], i])
+				for month in range(12):
+					list_all.append(
+					[int(data_year[k+month]),	int(data_month[k+month]),
+					data_lon[i], data_lat[i],
+					data_depth[j],
+					data_sta[i][j][k+month], data_ctsm[i][j][k+month],
+					sta_alt[i], i])
 
-	# Replace masked elements with NaN
-	list_all = np.ma.filled(list_all, fill_value=np.nan)
-	# Transform list into pd data frame
-	all_result=pd.DataFrame(np.array(list_all),columns=['data_year','data_month','data_lon','data_lat','data_depth','data_sta','data_ctsm','alt','station_id'])
-	# Export to .csv file (na_rep is to replace empty elements by -9999)
-	all_result.to_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False,na_rep=-9999)
+# Replace masked elements with NaN
+list_all = np.ma.filled(list_all, fill_value=np.nan)
+# Transform list into pd data frame
+all_result=pd.DataFrame(np.array(list_all),columns=['data_year','data_month','data_lon','data_lat','data_depth','data_sta','data_ctsm','alt','station_id'])
+# Export to .csv file (na_rep is to replace empty elements by -9999)
+all_result.to_csv(os.environ['cegio'] + "/evaluation/stations/make_figures/extracted_csv/results.tmp." + os.environ['run_name'] + ".csv",header=False,index=False,na_rep=-9999)
 
-	print("Data extracted!")
+print("Data extracted!")

@@ -33,9 +33,18 @@ lon = dctsm.variables['lon']
 lat = dctsm.variables['lat']
 
 # difference
-diff_var = ctsm_var[:,:] - esa_var[:,:]
-absolute_average = np.round(np.mean(np.abs(diff_var)),2)
-rmse = np.round(np.sqrt(np.mean(np.square(diff_var))),2)
+diff_var_gla = ctsm_var[:,:] - esa_var[:,:]
+
+# Load glacier mask data
+mask_file = os.environ['cegio'] + "/mask_glacier.nc"
+dfile_mask = nc.Dataset(mask_file, 'r')
+glacier_mask = dfile_mask.variables['PCT_GLACIER'][:]
+
+# Create masked diff variable
+diff_var = np.ma.masked_where(glacier_mask > 0, diff_var_gla)
+
+absolute_average = np.round(np.nanmean(np.abs(diff_var)),2)
+rmse = np.round(np.sqrt(np.nanmean(np.square(diff_var))),2)
 
 # calculate 
 
@@ -105,7 +114,7 @@ filled = ax.pcolormesh(lon, lat, diff_var, cmap='RdBu_r',
 # extent map
 ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())
 
-ax.set_title("CTSM - ESA-CCI (GAA = %s"%absolute_average + " , RMSE = %s"%rmse + ")")
+ax.set_title("CTSM - ESA-CCI (MAD = %s"%absolute_average + " , RMSE = %s"%rmse + ")")
 
 # draw land and ocean
 ax.add_feature(cartopy.feature.OCEAN)

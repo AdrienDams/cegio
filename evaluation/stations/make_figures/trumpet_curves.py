@@ -174,7 +174,7 @@ plt.errorbar(xmax_sta[not_nan_idx], -ydepth_sta[not_nan_idx], xerr = xmax_sta_st
 # plot options
 plt.xlabel('soil temperature (in \N{DEGREE SIGN}C)')
 plt.ylabel('depth (in cm)')
-plt.title('CTSM vs %s'%sys.argv[3] +  ' station, period %s'%startyear + '-%s'%endyear)
+plt.title('Sturm run vs %s'%sys.argv[3] +  ' station, period %s'%startyear + '-%s'%endyear)
 plt.grid(True, color = "grey", linestyle = "-.", alpha=0.2)
 plt.axvline(x=0, color="black", linestyle=":")
 

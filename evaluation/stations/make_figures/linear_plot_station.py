@@ -16,7 +16,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # open netcdf
 stationfile = sys.argv[1]
-#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_040/stations-vs-ctsm.1979-2020.tmp.57_DOM02_040.nc"
+#stationfile = "/work/aa0049/a271098/cegio/data/stations/57_DOM02_001/stations-vs-ctsm.1979-2020.tmp.57_DOM02_001.nc"
 
 dstation = nc.Dataset(stationfile, 'r') # read only
 
@@ -25,6 +25,7 @@ station_choosen = int(sys.argv[2])
 # write variables stations
 lons = dstation['lon']
 lats = dstation['lat']
+depths = dstation['depth']
 sta_vars  = dstation['soiltemp']
 ctsm_vars = dstation['ctsm_soiltemp']
 
@@ -39,6 +40,13 @@ max_depth = 242
 stepyear  = 5
 sta_var   = sta_var[:,0:max_depth]
 ctsm_var  = ctsm_var[:,0:max_depth]
+
+# Calculate the minimum and maximum of all non-NaN values in sta_var and ctsm_var
+id_sta_var_min = np.min(np.argmax(~np.isnan(sta_var), axis=1))
+id_sta_var_max = np.max(np.argmax(~np.isnan(sta_var), axis=1))
+depth_sta_var_min = depths[id_sta_var_min]
+depth_sta_var_max = depths[id_sta_var_max]
+id_sta_var_n = len(np.unique(np.argmax(~np.isnan(sta_var), axis=1)))
 
 # depth average
 sta_var_davg  = np.average(sta_var, axis=1)
@@ -62,27 +70,14 @@ years_months = np.arange(startperiod, endperiod,1/12)
 sta_var_ysel = sta_var_davg[startindex_real:endperiod_real]
 ctsm_var_ysel = ctsm_var_davg[startindex_real:endperiod_real]
 
-# running average
-window=12
-#sta_var_ravg = np.mean(sta_var_ysel.reshape(-1, window), axis=1)
-#ctsm_var_ravg = np.mean(ctsm_var_ysel.reshape(-1, window), axis=1)
-sta_var_ravg_unmask = np.convolve(sta_var_ysel, np.ones(window), 'same') / window
-ctsm_var_ravg_unmask = np.convolve(ctsm_var_ysel, np.ones(window), 'same') / window
-
-# mask arrays
-sta_var_ravg  = np.ma.masked_where(sta_var_ysel.mask,sta_var_ravg_unmask)
-ctsm_var_ravg = np.ma.masked_where(ctsm_var_ysel.mask,ctsm_var_ravg_unmask)
-
 # difference
 diff = ctsm_var_ysel-sta_var_ysel
 
 ## linear plot
 fig, ax = plt.subplots(figsize=(12,4))
 
-ax.plot(years_months, sta_var_ravg, color="black")
-ax.plot(years_months, ctsm_var_ravg, color="#AD885F")
-ax.plot(years_months, sta_var_ysel, color="black", linewidth=0.9, linestyle="--")
-ax.plot(years_months, ctsm_var_ysel, color="#AD885F", linewidth=0.9, linestyle="--")
+ax.plot(years_months, sta_var_ysel, color="black")#, linewidth=0.9), linestyle="--")
+ax.plot(years_months, ctsm_var_ysel, color="green")#, linewidth=0.9), linestyle="--")
 
 # color histogram
 cm = plt.cm.RdYlBu_r
@@ -95,28 +90,27 @@ rescale = lambda y: (y - (-cmap_top)) / (cmap_top - -(cmap_top))
 ax.bar(years_months, diff, color=cm(rescale(diff)), width=1/12)
 
 # plot options
-#ymax = np.max([sta_var_ravg,ctsm_var_ravg,diff]) + 0.5
-#ymin = np.min([sta_var_ravg,ctsm_var_ravg,diff]) - 0.5
 #ax.set_ylim([ymin, ymax])
 ax.axhline(y=0, color="k", linestyle="--")
 ax.set_xlabel("year")
-ax.set_ylabel("column soil temperature (in \N{DEGREE SIGN}C)")
+y_axis_label = f"column (- {depth_sta_var_min:.0f} to - {depth_sta_var_max:.0f} cm, {id_sta_var_n:.0f} depths) \n soil temperature (in \N{DEGREE SIGN}C)"
+ax.set_ylabel(y_axis_label)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.grid(color='grey', linestyle='-', linewidth=0.25, alpha=0.5)
 
 # legend
-ctsm_pos_lab = legend_positions(years_months, ctsm_var_ravg)
-sta_pos_lab  = legend_positions(years_months, sta_var_ravg)
-ax.text(ctsm_pos_lab[0],ctsm_pos_lab[1],s="ctsm ouput",color="#AD885F")
+sta_pos_lab  = legend_positions(years_months, sta_var_ysel)
+ctsm_pos_lab = legend_positions(years_months, ctsm_var_ysel)
 ax.text(sta_pos_lab[0],sta_pos_lab[1],s="station %s"%sys.argv[3],color="black")
+ax.text(ctsm_pos_lab[0],ctsm_pos_lab[1],s="ctsm ouput",color="green")
 #ax.text(sta_pos_lab[0],sta_pos_lab[1]-2,s="(%s"%lon+" %s"%lat+")",color="black")
 
 # colorbar
 sm = ScalarMappable(cmap=cm, norm=plt.Normalize(-cmap_top,cmap_top))
 sm.set_array([])
 cbar = plt.colorbar(sm, pad=0.1)
-cbar.set_label('difference', rotation=270,labelpad=10)
+cbar.set_label('soil temperature difference (in \N{DEGREE SIGN}C)', rotation=270,labelpad=10)
 
 plot_name = output_dir + "linear_station_%s"%sys.argv[3]
 plt.savefig(plot_name+'.png', format='png', bbox_inches='tight', dpi=300)

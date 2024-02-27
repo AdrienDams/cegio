@@ -1,12 +1,12 @@
 #!/bin/sh
 
-echo "Enter year (only for splines graph):" 
+#echo "Enter year (only for splines graph):" 
 
-read year
+#read year
 
-echo "Enter month (only for splines graph):" 
+#echo "Enter month (only for splines graph):" 
 
-read month
+#read month
 
 echo "Enter station ID:"
 
@@ -27,7 +27,7 @@ else
  echo "station $search, $station_id, $ctsm_id "
 
  # splines graph
- python $cegio/evaluation/stations/make_figures/splines_graph.py $year $month $station_id $ctsm_id $search
+ #python $cegio/evaluation/stations/make_figures/splines_graph.py $year $month $station_id $ctsm_id $search
 
  # linear plot
  input_linear=$data_folder/stations-vs-ctsm.1979-2020.tmp.$run_name.nc

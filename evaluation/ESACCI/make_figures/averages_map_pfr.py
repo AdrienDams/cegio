@@ -27,11 +27,20 @@ output_dir = os.environ['cegio'] + "/figures/" + os.environ['run_name'] + "/ESAC
 os.makedirs(output_dir, exist_ok=True)
 
 # extract variables
-ctsm_var = dctsm.variables['TSOI'][0,:,:]-273.15 # remove useless dimension
-esa_var  = desa.variables[variable][0,:,:]
+ctsm_var_gla = dctsm.variables['TSOI'][0,:,:]-273.15 # remove useless dimension
+esa_var_gla  = desa.variables[variable][0,:,:]
 
 lon = dctsm.variables['lon']
 lat = dctsm.variables['lat']
+
+# Load glacier mask data
+mask_file = os.environ['cegio'] + "/mask_glacier.nc"
+dfile_mask = nc.Dataset(mask_file, 'r')
+glacier_mask = dfile_mask.variables['PCT_GLACIER'][:]
+
+# Create masked diff variable
+ctsm_var = np.ma.masked_where(glacier_mask > 0, ctsm_var_gla)
+esa_var  = np.ma.masked_where(glacier_mask > 0, esa_var_gla)
 
 # masking
 thre_cont  = 90
@@ -78,7 +87,7 @@ esa_pfr_area  = np.sum(esa_pextent_true == esa_reso)
 darkgreen  = colors.ListedColormap(['#1a9641'])
 lightgreen = colors.ListedColormap(['#a6d96a'])
 darkred    = colors.ListedColormap(['#d7191c'])
-yellow     = colors.ListedColormap(['#ffffbf'])
+orange     = colors.ListedColormap(['#fdae61'])
 blue       = colors.ListedColormap(['#0571b0'])
 fig = plt.figure(figsize=[8, 8], constrained_layout=True)
 
@@ -89,7 +98,7 @@ filled1 = ax.pcolormesh(lon, lat, contcont, cmap=darkgreen, transform=ccrs.Plate
 filled2 = ax.pcolormesh(lon, lat, contfree, cmap=darkred, transform=ccrs.PlateCarree())
 filled3 = ax.pcolormesh(lon, lat, freecont, cmap=blue, transform=ccrs.PlateCarree())
 filled4 = ax.pcolormesh(lon, lat, disccont, cmap=lightgreen, transform=ccrs.PlateCarree())
-filled5 = ax.pcolormesh(lon, lat, discfree, cmap=yellow, transform=ccrs.PlateCarree())
+filled5 = ax.pcolormesh(lon, lat, discfree, cmap=orange, transform=ccrs.PlateCarree())
 
 # extent map
 ax.set_extent([-180, 180, 90, 57], ccrs.PlateCarree())

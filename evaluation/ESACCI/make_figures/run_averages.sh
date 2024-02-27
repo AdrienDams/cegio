@@ -19,7 +19,7 @@ for i in {0..2}; do
  input_ctsm=$data_folder/CTSM_regridded/$run_name.TSOI.$depth.period.nc
  input_esa=$data_folder/ESACCI_regridded/$run_name.TSOI.$depth.period.nc
 
- python $folder/averages_map_soiltemp.py $input_ctsm $input_esa $depth
+ #python $folder/averages_map_soiltemp.py $input_ctsm $input_esa $depth
 
 done
 echo "TSOI done"
@@ -30,7 +30,7 @@ echo "TSOI done"
 input_ctsm=$data_folder/CTSM_regridded/$run_name.ALT.period.nc
 input_esa=$data_folder/ESACCI_regridded/$run_name.ALT.period.nc
 
-python $folder/averages_map_alt.py $input_ctsm $input_esa period
+#python $folder/averages_map_alt.py $input_ctsm $input_esa period
 
 echo "ALT done"
 
